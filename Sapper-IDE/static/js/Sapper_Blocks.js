@@ -17,26 +17,6 @@ Blockly.Blocks['Prompt'] = {
     });
   }
 };
-// Blockly.Blocks['Model'] = {
-//   init: function() {
-//     this.jsonInit({
-//     "type": "model",
-//      "message0": "%1",
-//       "args0": [
-//         {
-//           "type": "field_label_serializable",
-//           "name": "model_value",
-//           "text": ""
-//         }
-//       ],
-//   "previousStatement": null,
-//       "nextStatement": null,
-//   "colour": 315,
-//   "tooltip": "Model",
-//   "helpUrl": ""
-//     });
-//   }
-// };
 Blockly.Blocks['Tool_Model'] = {
   init: function() {
     this.jsonInit({
@@ -57,7 +37,6 @@ Blockly.Blocks['Tool_Model'] = {
     });
   }
 }
-;
 Blockly.Blocks['Module'] = {
   init: function() {
     this.jsonInit({
@@ -216,8 +195,8 @@ Blockly.Blocks['AI_Unit'] = {
     this.getField('preworkplus').clickHandler_= pluspreworkclick;
     // var show_model1 = show_model();
     // var show_prompt2 = show_prompt();
-    this.getField('promptplus').clickHandler_= function (){show_prompt()};
-    this.getField('modelplus').clickHandler_= function (){show_model()};
+    this.getField('promptplus').clickHandler_= plusprompt;
+    this.getField('modelplus').clickHandler_= plusmodel;
     this.getField('debug').clickHandler_= debugclick;
     var debugconsole =document.createElement("textarea");
     debugconsole.setAttribute("class", "ProjectPromptTemplate");
@@ -478,14 +457,6 @@ Blockly.Blocks['Model'] = {
       "tooltip": "",
       "helpUrl": "%{BKY_CONTROLS_WHILEUNTIL_HELPURL}"
     });
-    this.setOnChange((event) => {
-      // 如果事件类型是创建事件
-      if (event instanceof Blockly.Events.BlockCreate && event.blockId === this.id && event.workspaceId === this.workspace.id && this.workspace.id === ModelWorkspace.id) {
-          var modelname = this.getFieldValue('modelName')
-          RunModelConfigs[this.id] = {}
-          RunModelConfigs[this.id] = JSON.parse(JSON.stringify(ModelConfigs[modelname]));
-      }
-    });
   },
 };
 Blockly.Blocks['unit_var'] = {
@@ -550,7 +521,7 @@ Blockly.Blocks['Prompt_template'] = {
           "src": "http://127.0.0.1:5000/static/images/plus.png",
           "width": 12,
           "height": 12,
-          "alt": "saa",
+          "alt": "null",
           "flipRtl": false,
             "name":"aspectplus"
         },
@@ -655,43 +626,6 @@ Blockly.Blocks['LLM_Model'] = {
     if(this.workspace.id === ModelWorkspace.id){
       this.bindFieldChangeListener()
     }
-    this.setOnChange((event) => {
-      // 如果事件类型是创建事件
-      if (event instanceof Blockly.Events.BlockCreate && event.blockId === this.id && event.workspaceId === this.workspace.id && this.workspace.id === demoWorkspace.id) {
-        if(this.getInputTargetBlock('Model')){
-          RunEngineConfigs[this.id] = {}
-          RunEngineConfigs[this.id] = JSON.parse(JSON.stringify(EngineConfigs[this.getFieldValue('LLM_Name')]));
-        }
-      }
-      if (event.type === Blockly.Events.CLICK && this.workspace.id === demoWorkspace.id && this.getInputTargetBlock('Model')) {
-        if(event.targetType === 'block' && event.blockId === this.id){
-          generateEngineConfigForm(RunEngineConfigs[this.id], this.id, this.id)
-        }
-      }
-      if (event.type === Blockly.Events.MOVE && event.workspaceId === ModelWorkspace.id && ModelWorkspace.getBlockById(event.blockId).type === 'Model') {
-        var llmBlock = this;
-        if (!llmBlock.getInput('Model')) {
-          return;
-        }
-        var connectedBlock = llmBlock.getInputTargetBlock('Model');
-        if (connectedBlock) {
-          generateModelConfigForm(RunModelConfigs[connectedBlock.id], connectedBlock.id, this.id)
-        }
-        else{
-            var element = document.querySelector('[data-engine-id]');
-            if (element) {
-              // 获取 "data-engine-id" 属性的值
-              var engineId = element.getAttribute('data-engine-id');
-              if(engineId === this.id){
-                document.getElementById('ModelContentDiv').style.display = 'none';
-                document.getElementById('ModelContentDiv').innerHTML = '';
-                document.getElementById('CreateModelDiv').style.height = 'calc(100% - 30px)';
-                Blockly.svgResize(ModelWorkspace);
-              }
-            }
-        }
-      }
-    });
   },
   bindFieldChangeListener: function () {
     var block = this;

@@ -4,7 +4,6 @@ function initVariables() {
   Variable_xmlList = [];
   PromptList = [];
   PrompttemplateList = [];
-  ReadymodelList = [];
   ModelList = [];
   APIEngine = [];
   TraditionEngine = [];
@@ -12,12 +11,58 @@ function initVariables() {
   PromptValues = {};
   ModelValues = {};
   RunPromptValues = {};
+  EngineConfigs = {
+    'PLUSEngine':{
+    'temperature': [0.7, 0.01, 1,'Temperature'],
+    'max_tokens': [225, 1,2048,'Maximum length'],
+    'top_p': [1, 0.01, 1,'Top P'],
+    'frequency_penalty': [0 ,0.01,2,'Frequency penalty'],
+    'presence_penalty': [0,0.01,2,'Presence penalty'],
+    },
+  }
+  RunEngineConfigs = {}
+  ModelConfigs = {
+'text-davinci-003':{
+'temperature': [0.7, 0.01, 1,'Temperature'],
+'max_tokens': [225, 1,4000,'Maximum length'],
+'stop_strs': ['','Stop sequences'],
+'top_p': [1, 0.01, 1,'Top P'],
+'frequency_penalty': [0 ,0.01,2,'Frequency penalty'],
+'presence_penalty': [0,0.01,2,'Presence penalty'],
+// 'Best of': [1,1,20],
+},
+'gpt-3.5-turbo':{
+'temperature': [0.7, 0.01, 1,'Temperature'],
+'max_tokens': [225, 1,2048,'Maximum length'],
+'top_p': [1, 0.01, 1,'Top P'],
+'frequency_penalty': [0 ,0.01,2,'Frequency penalty'],
+'presence_penalty': [0,0.01,2,'Presence penalty'],
+},
+'DALL-E':{
+'n': [1, 1, 1,'Top P'],
+},
+};
+  RunModelConfigs = {};
+  RunPromptAspect = {}
+  PromptValue = {'Prompt_Name':[['Instruction', '']]}
+  ImportPromptValue = {}
+  BlockDebugIDs = ["input_value"]
+  DebugFlag = false
+  RerunFlag = false
+  InputFlag = false
+  PromptValues = {};
+  PythonPromptValues = {}
+  initvariables = []
+  recordinput = "preInfo"
+  workerindex = 0
+  ClarifyConversion = [];
+  ExploreConversion = [];
+  DesignManager = '';
 }
 // 初始化IDE界面及其相关功能
 function initIDE() {
   // 清空blocklyDiv的内容
   document.getElementById("blocklyDiv").innerHTML = "";
-
   // 创建Blockly工作区
   demoWorkspace = Blockly.inject('blocklyDiv', {
     media: 'static/media/',
@@ -42,7 +87,6 @@ function initIDE() {
 
   // 初始化变量
   initVariables();
-
   // 注册回调函数
   demoWorkspace.registerButtonCallback("Create_Prompt", function (d) { show_prompt(); });
   demoWorkspace.registerButtonCallback("Create_Variable", function (d) { create_variable() });
@@ -56,7 +100,6 @@ function initIDE() {
 
   // 添加工作区更改监听器
   demoWorkspace.addChangeListener(ShowPromptEvent);
-
   // 更新保存项目名称的按钮样式
   document.getElementById("Save_Project_Name").style.width = "110px";
   document.getElementById("Save_Project_Name").innerText = "Undefined Name";
@@ -70,11 +113,11 @@ function init_console() {
 // 添加前置任务点击事件
 pluspreworkclick = function () {
   var c = demoWorkspace.getBlockById(this.getSourceBlock().id)
-  var variable_name = prompt("Please enter the variable name", "variable");
-  if (variable_name != null) {
+  // var variable_name = prompt("Please enter the variable name", "variable");
+  // if (variable_name != null) {
+    var variable_name = ''
     var variable0 = Blockly.utils.xml.createElement("block");
     variable0.setAttribute("type", "unit_var");
-    variable0.setAttribute("deleteinfo", variable_name);
     var field0 = Blockly.utils.xml.createElement("field");
     field0.setAttribute("name", "unit_value");
     field0.appendChild(Blockly.utils.xml.createTextNode(variable_name));
@@ -82,8 +125,20 @@ pluspreworkclick = function () {
     var block = Blockly.Xml.domToBlock(variable0, demoWorkspace);
     block.initSvg();
     var d = c.getInput("PreWorkers")
-    d.connection.connect(block.previousConnection);
-  }
+        var connection = d.connection;
+      if (connection.targetConnection) {
+        var lastBlock = connection.targetConnection.sourceBlock_;
+        while (lastBlock.nextConnection && lastBlock.nextConnection.targetConnection) {
+          lastBlock = lastBlock.nextConnection.targetConnection.sourceBlock_;
+        }
+
+        if (lastBlock.nextConnection) {
+          lastBlock.nextConnection.connect(block.previousConnection);
+        }
+      } else {
+        d.connection.connect(block.previousConnection);
+      }
+  // }
 }
 // plusaspectclick函数
 function plusaspectclick() {
@@ -109,10 +164,41 @@ function plusaspectclick() {
       lastBlock.nextConnection.connect(variableBlock.previousConnection);
     }
   } else {
-    connection.connect(variableBlock.outputConnection);
+    connection.connect(variableBlock.previousConnection);
   }
 }
+function plusprompt() {
+    var variableBlock;
+    if(this.sourceBlock_.workspace.id === demoWorkspace.id){
+        variableBlock = demoWorkspace.newBlock('Prompt_template');
+        variableBlock.initSvg();
+        variableBlock.render();
+    }
+    else if(this.sourceBlock_.workspace.id === PromptWorkspace.id){
+        variableBlock = PromptWorkspace.newBlock('Prompt');
+        variableBlock.initSvg();
+        variableBlock.render();
+    }
+  var connection = this.sourceBlock_.getInput('Prompt').connection;
+  connection.connect(variableBlock.outputConnection)
+}
+function plusmodel() {
+    var Block;
+    if(this.sourceBlock_.workspace.id === demoWorkspace.id){
+        Block = demoWorkspace.newBlock('LLM_Model');
+        Block.setFieldValue('PLUSEngine', 'LLM_Name');
+        Block.initSvg();
+        Block.render();
+        // Block.setFieldValue('Engine_Name', 'LLM_Name');
+        var model = demoWorkspace.newBlock('Model');
+        model.initSvg();
+        model.render();
+        Block.getInput('Model').connection.connect(model.previousConnection)
+        var connection = this.sourceBlock_.getInput('Model').connection;
+        connection.connect(Block.outputConnection)
+    }
 
+}
 // 调试点击事件
 debugclick = function () {
   var i;
@@ -205,10 +291,7 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
         document.getElementById(BlockDebugIDs[i]).style.display = "none";
     }
     document.getElementById("debug" + workerid).style.display = "block";
-    // console.log(prompt_name)
     var promptparam = getPromptParams(prompt_name);
-    console.log(promptparam)
-    console.log(preunits)
     var workinput = prompt_name;
     for(i=0;i<promptparam.length;i++){
         workinput = workinput.replace("{{" + promptparam[i] + "}}",preunits[i]);
@@ -223,7 +306,6 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
         RerunFlag = true
         document.getElementById('submit_value').style.width = '50%';
         document.getElementById('rerun_value').style.display = 'block';
-        // document.getElementById('BlockDebugValue').style.height = document.getElementById('BlockDebugValue').getAttribute("debugheight");
         document.getElementById("submit_value").style.display = "block";
         document.getElementById("debug" + workerid).readOnly = false;
         let input;
@@ -235,6 +317,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
             document.getElementById("debug" + workerid).value += "\nRunning-------------------------\n"
             if(prompt_name !== ""){
                 new Promise(resolve=>{
+                    $('#submit_value').attr('disabled','disabled')
+                    $('#rerun_value').attr('disabled','disabled')
                     send["action"] = "run_Function";
                     send["prompt_name"] = prompt_name;
                     send["preunits"] = "#*#*" + preunits.join("#*#*");
@@ -249,7 +333,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     }}).done(function (data) {
                         data = JSON.parse(data)
-                      console.log(Object.keys(data))
+                       $('#submit_value').removeAttr('disabled')
+                        $('#rerun_value').removeAttr('disabled')
                         if(Object.keys(data).indexOf('error') !== -1){
                             document.getElementById("debug" + workerid).value += data['error'];
                             demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
@@ -276,6 +361,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
     document.getElementById("debug" + workerid).value += "\nRunning-------------------------\n"
     if(prompt_name !== ""){
         return new Promise(resolve=>{
+            $('#submit_value').attr('disabled','disabled')
+            $('#rerun_value').attr('disabled','disabled')
             send["action"] = "run_Function";
             send["prompt_name"] = prompt_name;
             send["preunits"] = "#*#*" + preunits.join("#*#*");
@@ -290,7 +377,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             }}).done(function (data) {
                 data = JSON.parse(data)
-              console.log(Object.keys(data))
+              $('#submit_value').removeAttr('disabled')
+              $('#rerun_value').removeAttr('disabled')
                 if(Object.keys(data).indexOf('error') !== -1){
                     document.getElementById("debug" + workerid).value += data['error'];
                     demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
@@ -340,6 +428,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
             document.getElementById("debug" + workerid).value += "\nRunning-------------------------\n"
             if(prompt_name !== ""){
                 return new Promise(resolve=>{
+                    $('#submit_value').attr('disabled','disabled')
+                    $('#rerun_value').attr('disabled','disabled')
                     send["action"] = "run_PythonREPL";
                     send["prompt_name"] = prompt_name;
                     send["preunits"] = "#*#*" + preunits.join("#*#*");
@@ -352,6 +442,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                         "senddata": JSON.stringify(send),
                     }}).done(function (data) {
                         data = JSON.parse(data)
+                        $('#submit_value').removeAttr('disabled')
+                        $('#rerun_value').removeAttr('disabled')
                         if(Object.keys(data).indexOf('error') !== -1){
                             document.getElementById("debug" + workerid).value += data["error"];
                             demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
@@ -377,6 +469,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
     document.getElementById("debug" + workerid).value += "\nRunning-------------------------\n"
     if(prompt_name !== ""){
         return new Promise(resolve=>{
+            $('#submit_value').attr('disabled','disabled')
+            $('#rerun_value').attr('disabled','disabled')
             send["action"] = "run_PythonREPL";
             send["prompt_name"] = prompt_name;
             send["preunits"] = "#*#*" + preunits.join("#*#*");
@@ -389,6 +483,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                 "senddata": JSON.stringify(send),
             }}).done(function (data) {
                 data = JSON.parse(data)
+                $('#submit_value').removeAttr('disabled')
+                $('#rerun_value').removeAttr('disabled')
                 if(Object.keys(data).indexOf('error') !== -1){
                     document.getElementById("debug" + workerid).value += data["error"];
                     demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
@@ -778,19 +874,6 @@ function show_engine_console() {
 
 function save_project(){
     var filename=document.getElementById("Save_Project_Name").innerText;
-    if(filename === "Undefined Name"){
-        filename = prompt("Please enter the name of the project you want to save");
-        if(filename === null){
-            return;
-        }
-        var project1 = document.createElement('button');
-        project1.innerHTML = filename;
-        project1.setAttribute("class", "content_button");
-        project1.style.marginBottom = "2px";
-        project1.style.width = document.getElementById("sapper_body").offsetWidth*0.1 + "px";
-        project1.style.textAlign = "left";
-        document.getElementById("ShowProjectDiv").appendChild(project1);
-    }
     var Code_xmlListtext = [];
     var i;
     for(var Code_xml in Code_xmlList){
@@ -808,10 +891,6 @@ function save_project(){
     for(var Prompttemplate in PrompttemplateList){
         PrompttemplateListtext.push(Blockly.Xml.domToText(PrompttemplateList[Prompttemplate]));
     }
-    var ReadymodelListtext = [];
-    // for(var Readymodel in ReadymodelList){
-    //     ReadymodelListtext.push(Blockly.Xml.domToText(ReadymodelList[Readymodel]));
-    // }
     var ModelListtext = [];
     for(i=1; i<ModelList.length; i++){
         ModelListtext.push(Blockly.Xml.domToText(ModelList[i]));
@@ -820,18 +899,34 @@ function save_project(){
     for(i = 1; i < DIYmodelList.length; i++){
         DIYmodelListtext.push(Blockly.Xml.domToText(DIYmodelList[i]));
     }
+    var APIEnginetext = [];
+    for(i = 1; i < APIEngine.length; i++){
+        APIEnginetext.push(Blockly.Xml.domToText(APIEngine[i]));
+    }
+    var TraditionEnginetext = [];
+    for(i = 1; i < TraditionEngine.length; i++){
+        TraditionEnginetext.push(Blockly.Xml.domToText(TraditionEngine[i]));
+    }
+    const dataContainer = document.getElementById("data-container");
+    const topLevelCards = dataContainer.querySelectorAll("#data-container> .task-container > .card");
+    const parsedCards = parseNesting(topLevelCards);
     var project = { "Code_xmlList": Code_xmlListtext,"Variable_xmlList": Variable_xmlListtext,
         "PromptList": PromptListtext,"PrompttemplateList": PrompttemplateListtext,
-        "ReadymodelList": ReadymodelListtext,"ModelList": ModelListtext,
-        "DIYmodelList": DIYmodelListtext,"PromptValues": PromptValues,"ModelValues": ModelValues};
+        "ModelList": ModelListtext,
+        "DIYmodelList": DIYmodelListtext,"APIEngine": APIEnginetext,"PromptValue": PromptValue,
+        "ModelValues": ModelValues,"RunPromptAspect":RunPromptAspect,
+        "ImportPromptValue" :ImportPromptValue,"TraditionEngine" :TraditionEnginetext,
+        "RunEngineConfigs": RunEngineConfigs,"EngineConfigs":EngineConfigs,
+        "DesignManager" : DesignManager, "ExploreConversion" : ExploreConversion,
+        "ClarifyConversion" :ClarifyConversion, 'TaskCards': parsedCards,
+        'Require': document.getElementById('Require_display').value,
+    };
     var workspacexml = Blockly.Xml.workspaceToDom(demoWorkspace);
-    var xml_text = Blockly.Xml.domToPrettyText(workspacexml);
-    console.log(xml_text)
-    project["workspace"] = xml_text;
-    PromptListtext.push(filename);
+    project["workspace"] = Blockly.Xml.domToPrettyText(workspacexml);
     ProjectValues[filename] = project
-    document.getElementById("Save_Project_Name").innerText = filename
-    document.getElementById("Save_Project_Name").style.color = "black";
+
+    // document.getElementById("Save_Project_Name").innerText = filename
+    // document.getElementById("Save_Project_Name").style.color = "black";
 }
 function update_project(UploadProject){
     var workspacexml_str = UploadProject["workspace"];
@@ -876,10 +971,6 @@ function update_project(UploadProject){
     for(i = 0; i < UploadProject["PrompttemplateList"].length; i++){
         var Prompttemplate = Blockly.Xml.textToDom(UploadProject["PrompttemplateList"][i]);
         PrompttemplateList.push(Prompttemplate);
-    }
-    for(i = 0; i < UploadProject["ReadymodelList"].length; i++){
-        var Readymodel = Blockly.Xml.textToDom(UploadProject["ReadymodelList"][i]);
-        ReadymodelList.push(Readymodel);
     }
     for(i = 0; i < UploadProject["ModelList"].length; i++){
         var Model = Blockly.Xml.textToDom(UploadProject["ModelList"][i]);
@@ -943,7 +1034,6 @@ function update_cards(jsondata, contain){
         if(data.type === 'task'){
           // document.getElementById('data-container').innerHTML = '';
           // document.getElementById('cardsContainer').innerHTML = '';
-            console.log(data.taskcard)
           $('#cardsContainer').append(createCard(data.taskcard, index));
           contain.append(createTaskCard(data.taskcard, index));
 
@@ -1053,6 +1143,7 @@ function upload_project(){
     a.addEventListener('change', function(e) {
         var file = e.target.files[0];
         var ProjectName = file.name.replace(".json", "").replace(" ", "");
+
         var reader = new FileReader();
         reader.readAsText(file, 'UTF-8');
         reader.onload = function (evt) {
@@ -1115,10 +1206,6 @@ function download_project(){
     for(var Prompttemplate in PrompttemplateList){
         PrompttemplateListtext.push(Blockly.Xml.domToText(PrompttemplateList[Prompttemplate]));
     }
-    var ReadymodelListtext = [];
-    // for(var Readymodel in ReadymodelList){
-    //     ReadymodelListtext.push(Blockly.Xml.domToText(ReadymodelList[Readymodel]));
-    // }
     var ModelListtext = [];
     for(i=1; i<ModelList.length; i++){
         ModelListtext.push(Blockly.Xml.domToText(ModelList[i]));
@@ -1136,11 +1223,11 @@ function download_project(){
         TraditionEnginetext.push(Blockly.Xml.domToText(TraditionEngine[i]));
     }
     const dataContainer = document.getElementById("data-container");
-      const topLevelCards = dataContainer.querySelectorAll("#data-container> .task-container > .card");
-      const parsedCards = parseNesting(topLevelCards);
+    const topLevelCards = dataContainer.querySelectorAll("#data-container> .task-container > .card");
+    const parsedCards = parseNesting(topLevelCards);
     var project = { "Code_xmlList": Code_xmlListtext,"Variable_xmlList": Variable_xmlListtext,
         "PromptList": PromptListtext,"PrompttemplateList": PrompttemplateListtext,
-        "ReadymodelList": ReadymodelListtext,"ModelList": ModelListtext,
+        "ModelList": ModelListtext,
         "DIYmodelList": DIYmodelListtext,"APIEngine": APIEnginetext,"PromptValue": PromptValue,
         "ModelValues": ModelValues,"RunPromptAspect":RunPromptAspect,
         "ImportPromptValue" :ImportPromptValue,"TraditionEngine" :TraditionEnginetext,
@@ -1214,11 +1301,11 @@ function getPromptParams(prompt_template){
     return matches;
 }
 function download_prompt(){
-  var filename = prompt("Please enter the name of the prompt you want to download");
+  var filename = prompt("Please enter the name of the prompts you want to download");
   if(filename === null){
       return;
   }
-  var data = new Blob([JSON.stringify(PromptValues)]);
+  var data = new Blob([JSON.stringify(PromptValue)]);
   var clickEvent = new MouseEvent("click", {
     "view": window,
     "bubbles": true,
@@ -1239,7 +1326,6 @@ function upload_prompt(){
         var file = e.target.files[0];
         var reader = new FileReader();
         reader.readAsText(file, 'UTF-8');
-        console.log(PromptValues);
         reader.onload = function (evt) {
             var UploadPrompt = JSON.parse(evt.target.result);
             for(var key in UploadPrompt){
@@ -1252,22 +1338,22 @@ function upload_prompt(){
                 prompttemplate.appendChild(promptname);
                 var promptvalue = Blockly.utils.xml.createElement("statement");
                 promptvalue.setAttribute("name", "prompt_value");
+
                 var promptexample = Blockly.utils.xml.createElement("block");
                 promptexample.setAttribute("type", "Example");
                 var promptexample_name = Blockly.utils.xml.createElement("field");
                 promptexample_name.setAttribute("name", "Example_value");
-                promptexample_name.appendChild(Blockly.utils.xml.createTextNode(Object.keys(UploadPrompt[key])[0]));
+                promptexample_name.appendChild(Blockly.utils.xml.createTextNode(UploadPrompt[key][0][0]));
                 promptexample.appendChild(promptexample_name);
                 promptvalue.appendChild(promptexample);
                 prompttemplate.appendChild(promptvalue);
-                var nextexample = Object.keys(UploadPrompt[key]);
-                for(var i = 1; i < nextexample.length; i++){
+                for(var i = 1; i < UploadPrompt[key].length; i++){
                     var next = Blockly.utils.xml.createElement("next");
                     var promptexample1 = Blockly.utils.xml.createElement("block");
                     promptexample1.setAttribute("type", "Example");
                     var promptexample_name1 = Blockly.utils.xml.createElement("field");
                     promptexample_name1.setAttribute("name", "Example_value");
-                    promptexample_name1.appendChild(Blockly.utils.xml.createTextNode(nextexample[i]));
+                    promptexample_name1.appendChild(Blockly.utils.xml.createTextNode(UploadPrompt[key][i][0]));
                     promptexample1.appendChild(promptexample_name1);
                     next.appendChild(promptexample1);
                     promptexample.appendChild(next);
@@ -1276,7 +1362,7 @@ function upload_prompt(){
                 PromptList.push(prompttemplate);
                 PrompttemplateList.push(prompttemplate);
             }
-            PromptValues = Object.assign(PromptValues, UploadPrompt);
+            PromptValue = Object.assign(PromptValue, UploadPrompt);
         }
     });
 }
@@ -1345,7 +1431,7 @@ function import_prompt(){
     var promptname = prompttemplate.getFieldValue("Prompt_Name");
     ImportPromptValue[promptname] = []
     var i;
-    if(Object.keys(PromptValues).indexOf(promptname) !== -1) {
+    if(Object.keys(PromptValue).indexOf(promptname) !== -1) {
         var Sure = confirm(promptname + " already imported, do you want to overwrite it?");
         if (Sure === false) {
             return;
@@ -1381,16 +1467,16 @@ function save_model(){
             return;
         }
     }
-    EngineConfigs[modelcode] = {}
-    EngineConfigs[modelcode] = JSON.parse(JSON.stringify(RunModelConfigs[modelconfig]));
-    for(i = 0; i < ModelList.length; i++){
-        if(Blockly.Xml.domToText(ModelList[i]).indexOf(modelcode) !== -1){
-            ModelList.splice(i, 1);
+    // ModelConfigs[modelcode] = {}
+    // ModelConfigs[modelcode] = JSON.parse(JSON.stringify(RunModelConfigs[modelconfig]));
+    for(i = 0; i < DIYmodelList.length; i++){
+        if(Blockly.Xml.domToText(DIYmodelList[i]).indexOf(modelcode) !== -1){
+            DIYmodelList.splice(i, 1);
             break;
         }
     }
-    ModelValues[modelcode] = {};
-    console.log(modelxml)
+    RunModelConfigs[modelconfig]['model'] = ModelWorkspace.getBlockById(engineId).getInputTargetBlock('Model').getFieldValue("modelName")
+    ModelValues[modelcode] = JSON.parse(JSON.stringify(RunModelConfigs[modelconfig]));
     DIYmodelList.push(modelxml);
 }
 function import_model(){
@@ -1402,7 +1488,7 @@ function import_model(){
         var modelxml = Blockly.Xml.blockToDom(ModelWorkspace.getBlockById(engineId));
         var modelcode = ModelWorkspace.getBlockById(engineId).getFieldValue("LLM_Name");
         var i;
-        if(Object.keys(ModelValues).indexOf(modelcode) !== -1) {
+        if(Object.keys(EngineConfigs).indexOf(modelcode) !== -1) {
         var Sure = confirm(modelcode + " already exists, do you want to overwrite it?");
         if (Sure === false) {
             return;
@@ -1458,60 +1544,24 @@ function upload_model(){
             for(var key in UploadModel){
                 var LLM = Blockly.utils.xml.createElement("block");
                 LLM.setAttribute("type", "LLM_Model");
-                LLM.setAttribute("collapsed", "true");
                 var LLM_name = Blockly.utils.xml.createElement("field");
                 LLM_name.setAttribute("name", "LLM_Name");
                 LLM_name.appendChild(Blockly.utils.xml.createTextNode(key));
                 LLM.appendChild(LLM_name);
-                var nextexample = Object.keys(UploadModel[key]);
-                var nextexamplevalue = Object.values(UploadModel[key]);
-                console.log(nextexample);
                 var LLM_model = Blockly.utils.xml.createElement("statement");
                 LLM_model.setAttribute("name", "Model");
                 var LLM_model1 = Blockly.utils.xml.createElement("block");
                 LLM_model1.setAttribute("type", "Model");
                 var LLM_model1_name = Blockly.utils.xml.createElement("field");
-                LLM_model1_name.setAttribute("name", "model_value");
-                LLM_model1_name.appendChild(Blockly.utils.xml.createTextNode(nextexamplevalue[0]));
+                LLM_model1_name.setAttribute("name", "modelName");
+                LLM_model1_name.appendChild(Blockly.utils.xml.createTextNode(UploadModel[key]['model']));
                 LLM_model1.appendChild(LLM_model1_name);
                 LLM_model.appendChild(LLM_model1);
                 LLM.appendChild(LLM_model);
-                var LLMConfig = Blockly.utils.xml.createElement("statement");
-                LLMConfig.setAttribute("name", "configuration");
-                var LLM_example = Blockly.utils.xml.createElement("block");
-                LLM_example.setAttribute("type","LLM_" + nextexample[1]);
-                var LLM_example_name = Blockly.utils.xml.createElement("field");
-                LLM_example_name.setAttribute("name", "config_name");
-                LLM_example_name.appendChild(Blockly.utils.xml.createTextNode(nextexample[1]));
-                LLM_example.appendChild(LLM_example_name);
-                var LLM_example_value = Blockly.utils.xml.createElement("field");
-                LLM_example_value.setAttribute("name", "config_value");
-                LLM_example_value.appendChild(Blockly.utils.xml.createTextNode(nextexamplevalue[1]));
-                LLM_example.appendChild(LLM_example_value);
-                LLMConfig.appendChild(LLM_example);
-                LLM.appendChild(LLMConfig);
-                for(var i = 2; i < nextexample.length; i++){
-                    var key1 = nextexample[i];
-                    var value1 = nextexamplevalue[i];
-                    var next = Blockly.utils.xml.createElement("next");
-                    var LLM_example1 = Blockly.utils.xml.createElement("block");
-                    LLM_example1.setAttribute("type","LLM_" + key1);
-                    LLM_example_name = Blockly.utils.xml.createElement("field");
-                    LLM_example_name.setAttribute("name", "config_name");
-                    LLM_example_name.appendChild(Blockly.utils.xml.createTextNode(key1));
-                    LLM_example1.appendChild(LLM_example_name);
-                    LLM_example_value = Blockly.utils.xml.createElement("field");
-                    LLM_example_value.setAttribute("name", "config_value");
-                    LLM_example_value.appendChild(Blockly.utils.xml.createTextNode(value1));
-                    LLM_example1.appendChild(LLM_example_value);
-                    next.appendChild(LLM_example1);
-                    LLM_example.appendChild(next);
-                    LLM_example = LLM_example1;
-                }
-                console.log(LLM);
                 ModelList.push(LLM);
                 DIYmodelList.push(LLM);
             }
+            ModelValues = Object.assign(ModelValues, UploadModel);
         }
     });
 }
@@ -1552,11 +1602,11 @@ function show_model(){
                 scaleSpeed : 1.2
             }
         });
-        ModelWorkspace.registerToolboxCategoryCallback('ready_models', myCategoryFlyoutready_modelsCallback);
         ModelWorkspace.registerToolboxCategoryCallback('DIYModel', myCategoryFlyoutDIYModelCallback);
         ModelWorkspace.registerToolboxCategoryCallback('APIEngine', myCategoryFlyoutAPIEngineCallback);
         ModelWorkspace.registerToolboxCategoryCallback('TraditionEngine', myCategoryFlyoutTraditionEngineCallback);
         Blockly.Xml.domToWorkspace(ModelWorkspace, workxml);
+        ModelWorkspace.addChangeListener(CreateModelEvent);
         document.getElementById('show_promptpanel_button').style.backgroundColor="gainsboro";
         document.getElementById('show_modelpanel_button').style.backgroundColor="#7c7676";
     }
@@ -1706,7 +1756,6 @@ function splitSteps(){
                             }
                         }
                         var genalprompt = [];
-                        console.log(steps)
                         for(i = 0;i<Object.values(steps).length;i++){
                             genalprompt.push(steps["step" + i])
                         }
@@ -1720,7 +1769,6 @@ function splitSteps(){
                         document.getElementById('ReadySplit').style.display = 'none';
                         document.getElementById('DecomposeButton').className = 'btn btn-msg';
                         alert('Result error')
-                        console.log(res)
                     }
                 })
         },
@@ -1728,7 +1776,6 @@ function splitSteps(){
             document.getElementById('ReadySplit').style.display = 'none';
             document.getElementById('DecomposeButton').className = 'btn btn-msg';
             alert('Result error')
-            console.log(res)
         }
     })
 }
@@ -2332,7 +2379,6 @@ function extractDataFromCards() {
 
         const card = document.querySelector(`[${attributeName}="${cardId}"]`);
 
-        console.log(card)
         // let card = document.querySelector(`[data-worker-id =cardId]`);
         let workerId = card.getAttribute("data-worker-id");
 
@@ -2433,7 +2479,7 @@ function parseNesting(cards) {
         cardData.promptName = workName;
         cardData.output =  output;
         cardData.prework = preworkData;
-        cardData.prompt =  {"context": prompt};
+        cardData.prompt =  {"Instruction": prompt};
         cardData.model = model;
         cardData.taskcard = taskcard;
     } else {
@@ -2476,7 +2522,6 @@ function StepstoUnit(promptchain){
     //         prompt: {context:prompt},
     //         model: model
     //     }]
-
     var unitxml = document.createElement("xml");
     var unitjson = {}
     var alltaskunit = []
@@ -2564,10 +2609,10 @@ function StepstoUnit(promptchain){
             var UnitPrompts = Blockly.utils.xml.createElement("block");
             UnitPrompts.setAttribute("type", "Prompt_template");
             UnitPrompts.setAttribute("collapsed", "true");
-            var UnitPromptsId = "prompt" + randomString(6)
+            var UnitPromptsId = Blockly.utils.genUid()
             UnitPrompts.setAttribute("id", UnitPromptsId);
-            RunPromptValues[UnitPromptsId] = {}
-            PromptValues[worker.workName] = {}
+            // RunPromptAspect[UnitPromptsId] = []
+            PromptValue[worker.workName] = {}
 
             var UnitPromptfield = Blockly.utils.xml.createElement("field");
             UnitPromptfield.setAttribute("name", "Prompt_Name");
@@ -2578,10 +2623,10 @@ function StepstoUnit(promptchain){
             UnitPrompts.appendChild(UnitPromptstate);
             var UnitPromptExample = Blockly.utils.xml.createElement("block");
             UnitPromptExample.setAttribute("type", "Example");
-            var UnitPromptExampleId = "example" + randomString(6)
+            var UnitPromptExampleId = Blockly.utils.genUid()
             UnitPromptExample.setAttribute("id", UnitPromptExampleId)
-            RunPromptValues[UnitPromptsId][UnitPromptExampleId] = Object.values(worker['prompt'])[0]
-            PromptValues[worker.workName][Object.keys(worker['prompt'])[0]] = Object.values(worker['prompt'])[0]
+            // RunPromptValues[UnitPromptsId][UnitPromptExampleId] = Object.values(worker['prompt'])[0]
+            RunPromptAspect[UnitPromptExampleId] = ['Instruction', Object.values(worker['prompt'])[0]]
             var UnitPromptExamplefield = Blockly.utils.xml.createElement("field");
             UnitPromptExamplefield.setAttribute("name", "Example_value");
             UnitPromptExamplefield.appendChild(Blockly.utils.xml.createTextNode(Object.keys(worker['prompt'])[0]));
@@ -2591,10 +2636,10 @@ function StepstoUnit(promptchain){
                 var UnitPromptNext = Blockly.utils.xml.createElement("next");
                 var UnitPromptExample1 = Blockly.utils.xml.createElement("block");
                 UnitPromptExample1.setAttribute("type", "Example");
-                var UnitPromptExample1Id = "example" + randomString(6)
+                var UnitPromptExample1Id = Blockly.utils.genUid();
                 UnitPromptExample1.setAttribute("id", UnitPromptExample1Id)
-                RunPromptValues[UnitPromptsId][UnitPromptExample1Id] = Object.values(worker['prompt'])[i]
-                PromptValues[worker.workName][Object.keys(worker['prompt'])[i]] = Object.values(worker['prompt'])[i]
+                RunPromptAspect[UnitPromptExample1Id] = ['Instruction', Object.values(worker['prompt'])[i]]
+                // PromptValues[worker.workName][Object.keys(worker['prompt'])[i]] = Object.values(worker['prompt'])[i]
                 var UnitPromptExamplefield1 = Blockly.utils.xml.createElement("field");
                 UnitPromptExamplefield1.setAttribute("name", "Example_value");
                 UnitPromptExamplefield1.appendChild(Blockly.utils.xml.createTextNode(Object.keys(worker['prompt'])[i]));
@@ -2604,7 +2649,6 @@ function StepstoUnit(promptchain){
                 UnitPromptExample = UnitPromptExample1;
             }
             PromptList.push(UnitPrompts)
-
 
             var Unit = Blockly.utils.xml.createElement("block");
             Unit.setAttribute("type", "AI_Unit");
@@ -2689,21 +2733,23 @@ function StepstoUnit(promptchain){
             var unitmodelparam = Blockly.utils.xml.createElement("block");
             unitmodelparam.setAttribute("type", "LLM_Model");
             unitmodelparam.setAttribute("collapsed", "true");
+            var unitmodelId = Blockly.utils.genUid();
+            unitmodelparam.setAttribute('id', unitmodelId)
             var unitmodelparamfield1 = Blockly.utils.xml.createElement("field");
             unitmodelparamfield1.setAttribute("name", "LLM_Name");
             unitmodelparamfield1.appendChild(Blockly.utils.xml.createTextNode(worker.model));
+            RunEngineConfigs[unitmodelId] = {}
+            RunEngineConfigs[unitmodelId] = JSON.parse(JSON.stringify(EngineConfigs['Engine_Name']));
             unitmodelparam.appendChild(unitmodelparamfield1);
             var unitmodelparamstate = Blockly.utils.xml.createElement("statement");
             unitmodelparamstate.setAttribute("name", "Model");
 
             var unitmodelparamengine = Blockly.utils.xml.createElement("block");
-
-
             unitmodelparamengine.setAttribute("type", "Model");
-
             var unitmodelparamfield2 = Blockly.utils.xml.createElement("field");
             unitmodelparamfield2.setAttribute("name", "model_value");
             unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode(worker.model));
+
             unitmodelparamengine.appendChild(unitmodelparamfield2);
             unitmodelparamstate.appendChild(unitmodelparamengine)
             unitmodelparam.appendChild(unitmodelparamstate);
@@ -2712,7 +2758,7 @@ function StepstoUnit(promptchain){
                 unitmodelparam.setAttribute("type", "APIEngine");
                 unitmodelparamfield2 = Blockly.utils.xml.createElement("field");
                 unitmodelparamfield2.setAttribute("name", "LLM_Name");
-                unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode(worker.model));
+                unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode('Engine_Name'));
                 unitmodelparam.appendChild(unitmodelparamfield2);
             }
             unitmodelvalue.appendChild(unitmodelparam);

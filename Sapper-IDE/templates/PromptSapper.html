@@ -37,15 +37,15 @@
             <div class="btn-group">
               <button type="button" id="Show_Project_List" onclick="show_project()" class="btn content_button">Project</button>
               <div class="btn-group">
-                <button type="button" class="btn content_button dropdown-toggle" data-bs-toggle="dropdown">File</button>
+                <button type="button" class="btn content_button dropdown-toggle" data-bs-toggle="dropdown">Artifacts</button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Create AI Chain Project" onclick="new_project()">Create Project</a></li>
-                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Save AI Chain Project" onclick="save_project()">Save Project</a></li>
+<!--                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Save AI Chain Project" onclick="save_project()">Save Project</a></li>-->
+                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Open AI Chain Project" onclick="upload_project()">Open Project</a></li>
                     <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Download AI Chain Project" onclick="download_project()">Download Project</a></li>
                     <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Python Source Code" onclick="download_code()">Download Code</a></li>
-                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Open AI Chain Project" onclick="upload_project()">Open Project</a></li>
                     <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Deploy AI Chain Project" onclick="deploymentCloud()">Deploy Project</a></li>
-                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Share AI Chain Project" onclick="share_project()">Share Project</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Share AI Chain Project to Gallery" onclick="share_project()">Share Project</a></li>
                 </ul>
               </div>
               <button type="button" id="Save_Project_Name" class="btn content_button" style="background-color: #acbfdc">Undefined Name</button>
@@ -73,8 +73,7 @@
   <div class="container-fluid" style="padding-left: 0">
       <div id="sapper_body" class="row">
           <div id="ProjectDiv" class="col-12" style="padding-left: 5px;padding-right: 0">
-              <div id="ShowProjectDiv" class="btn-group-vertical" style="padding-left: 5px;width: 80px;display: none;">
-              </div>
+              <div id="ShowProjectDiv" class="btn-group-vertical" style="padding-left: 10px;width: 80px;display: none;"></div>
               <div id="ProjectMainDiv" class="container-fluid" style="padding-bottom: 2px">
                   <div id="WorkDiv" class="row">
                       <div id="explorationDiv" class="col-12" style="height: 100%;display: none">
