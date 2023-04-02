@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Loader</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <input type="file" id="jsonFile" accept=".json">
+  <div id="jsonContent"></div>
+
+  <script>
+    $(document).ready(function() {
+      const jsonFileInput = $('#jsonFile');
+      const jsonContent = $('#jsonContent');
+
+      // 检查是否有存储在 localStorage 中的文件
+      const storedFile = localStorage.getItem('jsonFile');
+      if (storedFile) {
+        const storedBlob = new Blob([storedFile], {type: 'application/json'});
+        loadJsonFile(storedBlob);
+      }
+
+      jsonFileInput.on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // 将文件存储到 localStorage 中
+          const fileReader = new FileReader();
+          fileReader.onload = function(e) {
+            const fileContent = e.target.result;
+            localStorage.setItem('jsonFile', fileContent);
+            loadJsonFile(file);
+          }
+          fileReader.readAsText(file);
+        }
+      });
+
+      function loadJsonFile(file) {
+        const fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          const fileContent = e.target.result;
+          try {
+            const jsonData = JSON.parse(fileContent);
+            jsonContent.text(JSON.stringify(jsonData, null, 2));
+          } catch (error) {
+            console.error('Error loading JSON file:', error);
+          }
+        }
+        fileReader.readAsText(file);
+      }
+    });
+  </script>
+</body>
+</html>

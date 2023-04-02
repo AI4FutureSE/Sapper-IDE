@@ -1,0 +1,1 @@
+"{\"Text\":{\"Instruction\":\"{{List}}\\n\\nWrite an inspirational paragraph based on todos above.\\n\"},\"text2pic\":{\"Instruction\":\"{{Text}}\\n\\nConvert the beautiful text above into a description of a painting\\n\"},\"des2pic\":{\"Instruction\":\"{{description}}\\n\\nCreate inspiring pictures based on the description above\\n\"}}"
