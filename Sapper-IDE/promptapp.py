@@ -72,7 +72,7 @@ def Clarify():
     if request.method == 'POST':
         data = request.form
         print(data)
-        question, result = generate_query_expansion(data['message'], data['OpenAIKey'])
+        question, result = generate_query_expansion(data['behaviour'] ,data['message'], data['OpenAIKey'])
         return json.dumps({"question": question, "result": result})
 
 @app.route('/Explore',methods = ['POST','GET'])
@@ -95,6 +95,7 @@ def Decompose():
         data = request.form
         print(data)
         steps = Generasteps(data['message'], data['OpenAIKey'])
+        print(steps)
         return json.dumps(steps)
 
 @app.route('/Regetprompt',methods = ['POST','GET'])
@@ -134,9 +135,9 @@ def Getprompt():
         res = {}
         for step in requery.keys():
             prompts = gen_for_gpt3(requery[step]['input'],requery[step]['content'], data['OpenAIKey'])
-            res[requery[step]['output']] = []
+            res[step] = []
             for pro in prompts:
-                res[requery[step]['output']].append({'context': pro})
+                res[step].append({'context': pro})
         # return generate_query_expansion(data['function'], data['message'])
         return json.dumps(res)
 

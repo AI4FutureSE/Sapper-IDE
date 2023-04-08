@@ -4,52 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JSON Loader</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 </head>
 <body>
-  <input type="file" id="jsonFile" accept=".json">
-  <div id="jsonContent"></div>
-
-  <script>
-    $(document).ready(function() {
-      const jsonFileInput = $('#jsonFile');
-      const jsonContent = $('#jsonContent');
-
-      // 检查是否有存储在 localStorage 中的文件
-      const storedFile = localStorage.getItem('jsonFile');
-      if (storedFile) {
-        const storedBlob = new Blob([storedFile], {type: 'application/json'});
-        loadJsonFile(storedBlob);
-      }
-
-      jsonFileInput.on('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          // 将文件存储到 localStorage 中
-          const fileReader = new FileReader();
-          fileReader.onload = function(e) {
-            const fileContent = e.target.result;
-            localStorage.setItem('jsonFile', fileContent);
-            loadJsonFile(file);
-          }
-          fileReader.readAsText(file);
-        }
-      });
-
-      function loadJsonFile(file) {
-        const fileReader = new FileReader();
-        fileReader.onload = function(e) {
-          const fileContent = e.target.result;
-          try {
-            const jsonData = JSON.parse(fileContent);
-            jsonContent.text(JSON.stringify(jsonData, null, 2));
-          } catch (error) {
-            console.error('Error loading JSON file:', error);
-          }
-        }
-        fileReader.readAsText(file);
-      }
-    });
-  </script>
+<h1>saxdscffergfe</h1>
+<h1>saxdscffergfe</h1>
+  <div class="container" style="position: relative;z-index: 9999;">
+    <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;">
+      <img src="http://127.0.0.1:5000/static/images/debugred.png" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+      <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+    </div>
+    <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;">
+      <img src="http://127.0.0.1:5000/static/images/debugred.png" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+      <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+    </div>
+  </div>
 </body>
+<script>
+  $(document).ready(function() {
+    // Make the div draggable
+    $(".draggable-img").draggable();
+
+    // Delete the div when the delete button is clicked
+    $(".delete-btn-image").click(function() {
+      $(this).parent().remove()
+    });
+  });
+</script>
+
 </html>

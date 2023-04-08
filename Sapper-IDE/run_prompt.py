@@ -39,7 +39,7 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
             ready_prompt = ready_prompt.replace("{{%s}}" % key, prenunits[index])
         except Exception as e:
             e = "The number of preworkers is different from the number of parameters in the prompt."
-            return {"error": e}
+            return {"error": e, 'type': 'text'}
     Config = LLMConfigurator.Config()
     # openai.api_key = "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"
     openai.api_key = OpenAIKey
@@ -55,7 +55,7 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
                 size="512x512",
             )
             image_url = response['data'][0]['url']
-            return {'message': image_url}
+            return {'message': image_url, 'type': 'image'}
         if(model["engine"].replace(" ","")=="gpt-3.5-turbo"):
             # Note: you need to be using OpenAI Python v0.27.0 for the code below to work
             response=openai.ChatCompletion.create(
@@ -65,7 +65,7 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
                 ]
             )
             output = response.choices[0].message["content"]
-            return {'message': output}
+            return {'message': output, 'type': 'text'}
         for key in model:
             Config.add_to_config(key, model[key])
         response = openai.Completion.create(
@@ -86,9 +86,9 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
         # delete the empty string in the list
         output = [i for i in output if i != '']
         output = "\n".join(output)
-        return {'message': output}
+        return {'message': output, 'type': 'text'}
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e), 'type': 'text'}
 
 def run_SerpAPIWrapper(promptvalue, prenunits ,model, debugvalue):
     ready_prompt = promptvalue
@@ -110,7 +110,7 @@ def run_PythonREPL(promptvalue, prenunits ,model,debugvalue):
     print(ready_prompt)
     try:
         output = run_python_code(ready_prompt)
-        return {'message': output}
+        return {'message': output, 'type': 'text'}
     except Exception as e:
-        return {'error': str(e)}
+        return {'error': str(e), 'type': 'text'}
 

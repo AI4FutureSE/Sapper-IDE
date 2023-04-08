@@ -65,48 +65,59 @@ def savequery(query):
 
 
 os.environ["OPENAI_API_KEY"] = "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"
-f1 = open("pychain/PromptTemplate.json", "r")
+f1 = open("PromptTemplate.json", "r")
 prompt_template = json.loads(f1.read())
 
 
 def sapper(request):
     chain = sapperchain()
     chain.promptbase(prompt_template)
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","todos":"","Text":"","description":"","Des2Picture":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","User_Specified_Conditions":"","Character_Setting":"","Personality":"","Backstory":"","Appearance":"","Image":"","preInfo":""}
     query = update_request(initrecord, request)
-    todos=query["todos"]
-    Text=query["Text"]
-    description=query["description"]
-    Des2Picture=query["Des2Picture"]
+    User_Specified_Conditions=query["User_Specified_Conditions"]
+    Character_Setting=query["Character_Setting"]
+    Personality=query["Personality"]
+    Backstory=query["Backstory"]
+    Appearance=query["Appearance"]
+    Image=query["Image"]
     preInfo=query["preInfo"]
     query["output"] = []
     if query["runflag"]:
-        preInfo = """
-    Hi there! Welcome to our AI service. We are here to help you create inspiring pictures and texts with the help of Artificial Intelligence. To get started, please type in a text or description in the field provided. Our AI will then work its magic and generate an output based on your inputs. Let's get creative!"""
+        preInfo = """Welcome! I'm an AI service that can help you create unique and believable characters with a backstory, setting, personality, and appearance. To begin, please provide me with the character type and personality traits you'd like me to use. I'll take it from there to create a unique character for you."""
         query["preInfo"]=preInfo
     if query["runflag"]:
         query["output"].append(preInfo)
         stop, query, Unit = get_value("preInfo", request, query)
-    stop, query, todos = get_value("todos", request, query)
+    stop, query, User_Specified_Conditions = get_value("User_Specified_Conditions", request, query)
     if stop and query["runflag"]:
         query["runflag"] = False
-        query["input"] = "todos"
+        query["input"] = "User_Specified_Conditions"
         savequery(query)
         return {'Answer': query["output"]}
     if query["runflag"]:
-        Text = chain.worker({"Text":["Instruction"]},[todos],{"temperature":0.56,"max_tokens":225,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
-        query["Text"]=Text
+        Character_Setting = chain.worker({"Character_Setting":["Instruction"]},[User_Specified_Conditions],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        query["Character_Setting"]=Character_Setting
     if query["runflag"]:
-        description = chain.worker({"text2pic":["Instruction"]},[Text],{"temperature":0.56,"max_tokens":225,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
-        query["description"]=description
+        Personality = chain.worker({"Personality":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        query["Personality"]=Personality
     if query["runflag"]:
-        query["output"].append(description)
+        query["output"].append(Personality)
     if query["runflag"]:
-        Des2Picture = chain.worker({"des2pic":["Instruction"]},[description],{"n":1,"engine":" DALL-E"})
-        query["Des2Picture"]=Des2Picture
+        Backstory = chain.worker({"Backstory":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        query["Backstory"]=Backstory
     if query["runflag"]:
-        query["output"].append(Des2Picture)
-    
+        query["output"].append(Backstory)
+    if query["runflag"]:
+        Appearance = chain.worker({"Appearance":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        query["Appearance"]=Appearance
+    if query["runflag"]:
+        query["output"].append(Appearance)
+    if query["runflag"]:
+        Image = chain.worker({"Image":["Instruction"]},[Appearance],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        query["Image"]=Image
+    if query["runflag"]:
+        query["output"].append(Image)
+
 
 
     resetquery(query, initrecord)

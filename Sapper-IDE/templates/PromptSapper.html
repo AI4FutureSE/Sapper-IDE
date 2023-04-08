@@ -80,12 +80,12 @@
                           <div class="container-fluid" style="height: 100%;">
                               <div class="row" style="height: 100%">
                                 <div class="col-12" style="height: 100%; display: flex; padding: 0;overflow: auto">
-                                  <div id="explore-leftWrapper" style="position: relative; display: flex; flex-direction: column; width: 66.666%;">
+                                  <div id="explore-leftWrapper" style="position: relative; display: flex; flex-direction: column; width: 75%;">
                                         <div id="ChatExplore" class="clarify_display" style="height: 100%; padding-right: 5px;padding-left: 5px;display: block">
                                           <div class="container-fluid" style="height: 100%;width: 100%;display: flex;flex-direction: column;padding-bottom: 20px">
                                               <div class="conversation-wrapper" id="Explore_conversation" style="flex: 1"></div>
                                               <div class="input-wrapper" style="height: 25px; width: 100%;">
-                                                <div class="input-group input-msg">
+                                                <div class="input-group input-msg" style="overflow-x: hidden">
                                                     <input required id="ExploreInput" name="message" type="text" class="form-control" placeholder="Enquiry">
                                                     <a class="btn btn-msg" type="submit" onclick="SendExplore()"><i class="bi bi-send-fill"></i></a>
                                                     <a class="btn btn-msg" onclick="ClearExplore()"><i class="bi bi-trash-fill"></i></a>
@@ -95,9 +95,9 @@
                                         </div>
                                         <div id="explore-separator" class="separator"></div>
                                   </div>
-                                  <div class="col-4" style="flex: 1">
-                                    <div class="clarify_display" style="height: 100%; padding: 10px;display: block">
-                                        <div class="task-note-container" style="height: 100%; display: flex; flex-direction: column;">
+                                  <div class='col-3' style="flex: 1;overflow-x: hidden">
+                                    <div class="clarify_display" style="height: 100%; padding: 10px;display: block;">
+                                        <div class="task-note-container" style="height: 100%; display: flex; flex-direction: column;padding: 0;">
                                             <h5 class="task-note-title" style="margin-bottom: 10px;">Task Note</h5>
                                             <textarea id="taskNodeDisplay" class="task-note-textarea" style="flex: 1; resize: none; padding: 10px;" placeholder="Enter your task notes here..."></textarea>
                                         </div>
@@ -112,7 +112,7 @@
                           <div class="container-fluid" style="height: 100%;">
                               <div class="row" style="height: 100%">
                                   <div class="col-12" style="height: 100%; display: flex; padding: 0;overflow: auto">
-                                        <div id="design-leftWrapper" style="position: relative; display: flex; flex-direction: column; width: 33.333%;">
+                                        <div id="design-leftWrapper" style="position: relative; display: flex; flex-direction: column; width: 33.333%;overflow-x: hidden">
                                           <div id="ChatClarify" style="height: 100%; padding-right: 5px;padding-left: 5px;display: block;">
                                               <div class="container-fluid clarify_display" style="height: 100%; width: 100%;display: flex;flex-direction: column; padding: 20px;overflow: hidden">
                                                   <div class="conversation-wrapper" id="Clarify_conversation" style="flex: 1;"></div>
@@ -127,8 +127,8 @@
                                           </div>
                                           <div id="design-separator" class="separator"></div>
                                         </div>
-                                        <div id="RequireDecompose" class="col-8" style="flex: 1;">
-                                       <div id="result_display"  style="padding: 10px;width:100%;height: 100%">
+                                        <div id="RequireDecompose" class="col-8" style="flex: 1;overflow-x: hidden">
+                                        <div id="result_display"  style="padding: 10px;width:100%;height: 100%">
                                           <div id="stepsContainer" class="card-columns" style="width: 100%;height: 100%; float: left;padding: 10px">
                                                 <div id="DraftSteps" style="width: 100%;height: 100%; float: left; padding: 0;flex-direction: column;display: flex">
 <!--                                                    <h5 class="task-requirement-title" style="margin-bottom: 5px;">Task Requirement</h5>-->
@@ -208,6 +208,12 @@
                           <div class="row"  id="EngineConsoleValue" style="height: 100%;overflow-y: auto">
                               <textarea id="init_engine_value" class="ProjectPromptTemplate" style="display: block" readonly="readonly"></textarea>
                           </div>
+                      </div>
+                      <div id="ImageConsole" class="container">
+<!--                        <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;right: 10px;top: 10px">-->
+<!--                          <img src="http://127.0.0.1:5000/static/images/debugred.png" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">-->
+<!--                          <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>-->
+<!--                        </div>-->
                       </div>
                   </div>
               </div>

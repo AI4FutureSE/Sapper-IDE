@@ -14,7 +14,7 @@ You should summarize it from three aspects:
 1. Illustrate the key requirements of the user?
 2. Desctibe the user's preference? For example, what the user like and what the user dislike. What should you have to do to satisfy the user's requirement and what you have not to do.
 3. List the points that you have to pay attention to when implementing the system exlicitly.
-You have to output the three aspects in the form of 1. Key Requirements:, 2. User Preference:, 3. Implementing Consideration:. You are expected to bullet list the key points for each aspects.
+You have to output the three aspects in the form of 1. Key Requirements:, 2. User Preference:, 3. Implementing Consideration:.You are expected to bullet list the key points for each aspects.
         """
         # self.conversation_file = conversation_file_name
 

@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 def program_Classifier(prompt, max_tokens=256, stop=None, temperature=0):
     response = None
@@ -39,7 +39,7 @@ def gen_for_dalle2(query):
 
     first = program_Classifier(prompt=prompt, max_tokens=256, temperature=0.5)
 
-    second = program_Classifier(prompt=prompt, max_tokens=256, temperature=0.7)
+    second =program_Classifier(prompt=prompt, max_tokens=256, temperature=0.7)
 
     third = program_Classifier(prompt=prompt, max_tokens=256, temperature=1)
 
@@ -48,3 +48,5 @@ def gen_for_dalle2(query):
     print('Third: ', third[0])
 
     return first, second, third
+query = '一个程序员做在电脑前，一个客户与程序员交流需求,动画风格'
+gen_for_dalle2(query)

@@ -263,14 +263,13 @@ function run_Function(){
     }
     controller = new AbortController();
     signal = controller.signal;
+    $('#submit_value').removeAttr('disabled')
+    $('#rerun_value').removeAttr('disabled')
     code = "async function asyncRun(){\n"  + code + "}\n" +
         "signal.addEventListener('abort', () => {\n" +
-        "    console.log('aborted by signal');\n" +
         "  });" +
         "asyncRun().then(() => {\n" +
-        "      console.log('eval() finished');\n" +
         "    }).catch((e) => {\n" +
-        "      console.log('eval() aborted:', e);\n" +
         "    });;";
      try {
         eval(code)
@@ -282,7 +281,6 @@ function run_Function(){
         }
 
     }
-    console.log(code);
 }
 // 与后台通信，访问openai 模型
 async function run_code(worker,prompt_name, preunits, model,workerid){
@@ -345,6 +343,19 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                         }
                         else{
                         document.getElementById("debug" + workerid).value += data['message'];
+                        if(data['type'] === 'image'){
+                            $('.ImageConsole').append(`
+                            <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;right: 10px;top: 10px">
+                                  <img src="${data['message']}" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+                                  <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+                             </div>
+                            `)
+                            $(".draggable-img").draggable();
+                            // Delete the div when the delete button is clicked
+                            $(".delete-btn-image").click(function() {
+                              $(this).parent().remove()
+                            });
+                        }
                         resolve(data.message);}
                     });
                 })
@@ -388,6 +399,19 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                 }
                 else{
                 document.getElementById("debug" + workerid).value += data['message'];
+                if(data['type'] === 'image'){
+                    $('#ImageConsole').append(`
+                    <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;right: 10px;top: 10px">
+                          <img src="${data['message']}" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+                          <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+                     </div>
+                    `)
+                    $(".draggable-img").draggable();
+                    // Delete the div when the delete button is clicked
+                    $(".delete-btn-image").click(function() {
+                      $(this).parent().remove()
+                    });
+                }
                 demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
                 document.getElementById('rerun_value').style.display = 'none';
                 document.getElementById('submit_value').style.width = '100%';
@@ -452,6 +476,19 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                             controller.abort()
                             resolve(data.error);
                         }else {
+                            if(data['type'] === 'image'){
+                                $('.ImageConsole').append(`
+                                <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;right: 10px;top: 10px">
+                                      <img src="${data['message']}" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+                                      <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+                                 </div>
+                                `)
+                                $(".draggable-img").draggable();
+                                // Delete the div when the delete button is clicked
+                                $(".delete-btn-image").click(function() {
+                                  $(this).parent().remove()
+                                });
+                            }
                         document.getElementById("debug" + workerid).value += data["message"];
                         resolve(data.message);}
                     });
@@ -493,6 +530,19 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                     resolve(data.error);
                 }else {
                 document.getElementById("debug" + workerid).value += data["message"];
+                if(data['type'] === 'image'){
+                    $('.ImageConsole').append(`
+                    <div class="position-absolute draggable-img" style="width: 150px; height: 150px; cursor: move;right: 10px;top: 10px">
+                          <img src="${data['message']}" alt="Your Image" class="img-thumbnail" style="width: 100%; height: 100%;">
+                          <button type="button" class="btn btn-danger btn-sm position-absolute delete-btn-image" style="top: -5px; right: -5px;">&times;</button>
+                     </div>
+                    `)
+                    $(".draggable-img").draggable();
+                    // Delete the div when the delete button is clicked
+                    $(".delete-btn-image").click(function() {
+                      $(this).parent().remove()
+                    });
+                }
                 demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugblack.png";
                 demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
                 document.getElementById('rerun_value').style.display = 'none';
@@ -947,6 +997,7 @@ function update_project(UploadProject){
     ClarifyConversion = UploadProject["ClarifyConversion"] ? UploadProject["ClarifyConversion"]:[];
     ExploreConversion = UploadProject["ExploreConversion"] ? UploadProject["ExploreConversion"]:[];
     DesignManager = UploadProject['DesignManager'];
+    document.getElementById('taskNodeDisplay').value = DesignManager;
     var TaskCards =  UploadProject['TaskCards'] ? UploadProject['TaskCards']:[];
     update_explore()
     update_clarify()
@@ -1232,7 +1283,7 @@ function download_project(){
         "ModelValues": ModelValues,"RunPromptAspect":RunPromptAspect,
         "ImportPromptValue" :ImportPromptValue,"TraditionEngine" :TraditionEnginetext,
         "RunEngineConfigs": RunEngineConfigs,"EngineConfigs":EngineConfigs,
-        "DesignManager" : DesignManager, "ExploreConversion" : ExploreConversion,
+        "DesignManager" : document.getElementById('taskNodeDisplay').value, "ExploreConversion" : ExploreConversion,
         "ClarifyConversion" :ClarifyConversion, 'TaskCards': parsedCards,
         'Require': document.getElementById('Require_display').value,
     };
@@ -1467,8 +1518,6 @@ function save_model(){
             return;
         }
     }
-    // ModelConfigs[modelcode] = {}
-    // ModelConfigs[modelcode] = JSON.parse(JSON.stringify(RunModelConfigs[modelconfig]));
     for(i = 0; i < DIYmodelList.length; i++){
         if(Blockly.Xml.domToText(DIYmodelList[i]).indexOf(modelcode) !== -1){
             DIYmodelList.splice(i, 1);
@@ -1479,6 +1528,7 @@ function save_model(){
     ModelValues[modelcode] = JSON.parse(JSON.stringify(RunModelConfigs[modelconfig]));
     DIYmodelList.push(modelxml);
 }
+
 function import_model(){
     var element = document.querySelector('[data-engine-id]');
     if(element){
@@ -1502,7 +1552,6 @@ function import_model(){
                 break;
             }
         }
-        ModelValues[modelcode] = {};
         ModelList.push(modelxml);
     }
     else{
@@ -1629,7 +1678,6 @@ function create_variable(){
         field0.setAttribute("name", "unit_value");
         field0.appendChild(Blockly.utils.xml.createTextNode(variable_name));
         variable0.appendChild(field0);
-        console.log(variable0);
         Variable_xmlList.push(variable0);
         var variable1 = Blockly.utils.xml.createElement("block");
         variable1.setAttribute("type", "unit_var_value");
@@ -1734,8 +1782,6 @@ function splitSteps(){
         },
         success: function (steps){
             steps = JSON.parse(steps)
-            console.log(Object.keys(steps))
-            promptsteps = steps;
            // for(i=0;i<Object.keys(steps).length;i++){
                 $.ajax({
                     url: 'http://127.0.0.1:5000/Getprompt',
@@ -1748,7 +1794,6 @@ function splitSteps(){
                         var i;
                         var j=0;
                         res = JSON.parse(res)
-                        promptchain = res
                         for(i=0;i<Object.values(res).length;i++){
                             steps["step" + i]["prompt"] = []
                             for(j=0;j < Object.values(res)[i].length;j++){
@@ -1841,7 +1886,8 @@ function ClearClarify(){
     document.getElementById("Clarify_conversation").innerHTML = ''
 }
 function Chathistory(){
-    let currentDialog = document.getElementsByClassName('dialog-msg')
+    // let currentDialog = document.getElementsByClassName('dialog-msg')
+    let currentDialog = $('#Clarify_conversation>.conversation-dialog>.dialog-msg-wrapper>.dialog-msg')
     let expansion_prompt = 'Functional requirement: ' + currentDialog[0].innerText
     let history = ''
     let flag = 1
@@ -1886,6 +1932,7 @@ function SendClarify(){
             type: 'post',
             data:{
                 'function': "clarify",
+                'behaviour': document.getElementById('taskNodeDisplay').value,
                 'message': message,
                 'OpenAIKey': OpenAIKey
             },
@@ -1894,7 +1941,6 @@ function SendClarify(){
                     alert("Connection to Server Error")
                 }
                 else {
-                    console.log(res)
                     res = JSON.parse(res)
                     // let answer = res.answer.slice(2).replaceAll('\n', '<br><br>')
                     $('#Clarify_conversation').append(generateDialog('Sapper', res["question"]))
@@ -1976,7 +2022,6 @@ function SendExplore(){
                     alert("Connection to Server Error")
                 }
                 else {
-                    console.log(res)
                     res = JSON.parse(res)
                     ExploreConversion.push(res['Answer'])
                     $('#Explore_conversation').append(generateDialog('Sapper', res['Answer']["content"]))
@@ -2648,7 +2693,7 @@ function StepstoUnit(promptchain){
                 UnitPromptExample.appendChild(UnitPromptNext);
                 UnitPromptExample = UnitPromptExample1;
             }
-            PromptList.push(UnitPrompts)
+            // PromptList.push(UnitPrompts)
 
             var Unit = Blockly.utils.xml.createElement("block");
             Unit.setAttribute("type", "AI_Unit");
@@ -2665,7 +2710,6 @@ function StepstoUnit(promptchain){
             unitpreunit.setAttribute("name", "PreWorkers");
             if (worker.prework.length !== 0) {
                 var unit_variable1 = "";
-                console.log(unitjson)
                 if (Object.keys(unitjson).indexOf(worker.prework[0][0]) === -1) {
                     unit_variable1 = Blockly.utils.xml.createElement("block");
                     unit_variable1.setAttribute("type", "unit_var");
@@ -2739,7 +2783,7 @@ function StepstoUnit(promptchain){
             unitmodelparamfield1.setAttribute("name", "LLM_Name");
             unitmodelparamfield1.appendChild(Blockly.utils.xml.createTextNode(worker.model));
             RunEngineConfigs[unitmodelId] = {}
-            RunEngineConfigs[unitmodelId] = JSON.parse(JSON.stringify(EngineConfigs['Engine_Name']));
+            RunEngineConfigs[unitmodelId] = JSON.parse(JSON.stringify(EngineConfigs['PLUSEngine']));
             unitmodelparam.appendChild(unitmodelparamfield1);
             var unitmodelparamstate = Blockly.utils.xml.createElement("statement");
             unitmodelparamstate.setAttribute("name", "Model");
@@ -2747,7 +2791,7 @@ function StepstoUnit(promptchain){
             var unitmodelparamengine = Blockly.utils.xml.createElement("block");
             unitmodelparamengine.setAttribute("type", "Model");
             var unitmodelparamfield2 = Blockly.utils.xml.createElement("field");
-            unitmodelparamfield2.setAttribute("name", "model_value");
+            unitmodelparamfield2.setAttribute("name", "modelName");
             unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode(worker.model));
 
             unitmodelparamengine.appendChild(unitmodelparamfield2);
@@ -2758,7 +2802,7 @@ function StepstoUnit(promptchain){
                 unitmodelparam.setAttribute("type", "APIEngine");
                 unitmodelparamfield2 = Blockly.utils.xml.createElement("field");
                 unitmodelparamfield2.setAttribute("name", "LLM_Name");
-                unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode('Engine_Name'));
+                unitmodelparamfield2.appendChild(Blockly.utils.xml.createTextNode('PythonREPL'));
                 unitmodelparam.appendChild(unitmodelparamfield2);
             }
             unitmodelvalue.appendChild(unitmodelparam);
@@ -2786,8 +2830,6 @@ function StepstoUnit(promptchain){
         const taskBlock1 = Blockly.Xml.domToBlock(unitxml.firstChild, demoWorkspace);
         alltaskunit.push(taskBlock1)
     }
-    console.log(unitjson)
-    console.log(alltaskunit.length)
     for(i = 0;i < alltaskunit.length-1;i++){
         alltaskunit[i].nextConnection.connect(alltaskunit[i+1].previousConnection);
     }

@@ -28,7 +28,10 @@ def program_Classifier(prompt, max_tokens=256, stop=None, temperature=0):
 
 def gen_for_gpt3(input, query, OpenAIKey):
     openai.api_key = OpenAIKey
-    input_mes = ", ".join(input)
+    input_m = []
+    for put in input:
+        input_m.append(put[0])
+    input_mes = ", ".join(input_m)
     prompt = 'A user is interacting with a large language model. They are crafting prompts and giving them to the LLM in order to get the model to complete a task or generate output.\n\n' + \
              'Figure out what the intent of the following prompt is that the user submitted and suggest a better prompt for what they are trying to do. Use triangle brackets {{}} for templating parts of the prompt that could be substituted. The new prompt should be specific and detailed.\n\n' + \
              'PROMPT: Write a short feature description for a website Input: Website_Name\n' + \

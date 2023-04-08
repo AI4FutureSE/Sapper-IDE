@@ -130,18 +130,19 @@ def Generasteps(query , OpenAIKey):
     # query = "I need to develop a function that allows users to search for nearby restaurants and hotels according to their current location and display the search results on the map."
     steps = decompose(query).split("\n\n")[1:]
     stepsJson = {}
-    for i,step in enumerate(steps):
+    for j,step in enumerate(steps):
         if '(Subtask' in step:
             temp = step.split("\n")
             inp = temp[0].split(" ")[2].split("&")
-            newinp = []
-            for i in inp:
-                newinp.append([i,'no'])
+            newinp = [[i, 'no'] for i in inp if i != 'None']
+            # for i in inp:
+            #     newinp.append([i,'no'])
             oup = temp[0].split(" ")[4]
+
             mod = temp[0].split(" ")[6][:-1]
             content = temp[1]
             js = {"content": content, "input": newinp, "output": [oup, 'no'], "model": mod}
-            name = 'step' + str(i)
+            name = 'step' + str(j)
             stepsJson[name] = js
 
     return stepsJson

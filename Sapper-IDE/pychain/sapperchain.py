@@ -27,7 +27,7 @@ class sapperchain:
         for key, value in promptvalue.items():
             for i in value:
                 ready_prompt += self.prompt_template[key][i] + "\n"
-        openai.api_key = "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"
+        openai.api_key = "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"
         para_name = self.getPromptParams(ready_prompt)
         for index, key in enumerate(para_name):
             ready_prompt = ready_prompt.replace("{{%s}}" % key, prenunits[index])
