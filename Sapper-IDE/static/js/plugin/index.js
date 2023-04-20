@@ -1,5 +1,67 @@
 var key = ''
 var weburl = ''
+function generateRandomString(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+// 用法示例：生成一个长度为 10 的随机字符串
+var ids = generateRandomString(10);
+
+function clear_conversion(){
+    document.getElementById('conv-0').innerHTML = ''
+    ids = generateRandomString(10);
+    if (weburl != null && weburl !== "") {
+                // 在这里可以将输入的Key提交到服务器进行处理
+                $.ajax({
+                    url: weburl,
+                    type: 'post',
+                    data:{
+                        'id': ids,
+                        'query': '',
+                        'OpenaiKey': key
+                    },
+                    success: function (res){
+                            res = JSON.parse(res)
+                            for(var i = 0;i<res.Answer.length;i++) {
+                                let answer = res.Answer[i]
+                                $('.conversation-wrapper').append(generateDialog('Sapper', answer))
+                                convWrapper.animate({
+                                    scrollTop: convWrapper.prop('scrollHeight')
+                                }, 500)
+                                // msgInput.removeAttr('disabled')
+                                $('#result_display').html('<h>' + res.Answer + '</h><br>')
+                                hljs.highlightAll()
+                            }
+                    },
+                    error: function (res){
+                        alert('Error')
+                        console.log(res)
+                        // msgInput.removeAttr('disabled')
+                    }
+                })
+            }
+}
+
+function generateMessage(msg){
+    return '<p class="dialog-msg">'+ msg +"</p>"
+}
+function generateDialog(user, msg){
+    return "<div class=\"conversation-dialog dialog-" + user.toLowerCase() + "\" data-role=\"" + user + "\">\n" +
+        "    <div class=\"dialog-portrait\">\n" +
+        "        <img src=\"../static/images/" + user.toLowerCase() + ".jpg\" class=\"dialog-portrait-img\">\n" +
+        "        <p class=\"dialog-portrait-name\">" + user + "</p>\n" +
+        "    </div>\n" +
+        "    <div class=\"dialog-msg-wrapper\">\n" +
+        "        <p class=\"dialog-msg\">" + msg + "</p>\n" +
+        "    </div>\n" +
+        "</div>"
+}
 $(document).ready(()=>{
     // tool tips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -26,8 +88,9 @@ $(document).ready(()=>{
                     url: weburl,
                     type: 'post',
                     data:{
-                        'id': 123456,
-                        'query': ''
+                        'id': ids,
+                        'query': '',
+                        'OpenaiKey': key
                     },
                     success: function (res){
                             res = JSON.parse(res)
@@ -37,7 +100,7 @@ $(document).ready(()=>{
                                 convWrapper.animate({
                                     scrollTop: convWrapper.prop('scrollHeight')
                                 }, 500)
-                                msgInput.removeAttr('disabled')
+                                // msgInput.removeAttr('disabled')
                                 $('#result_display').html('<h>' + res.Answer + '</h><br>')
                                 hljs.highlightAll()
                             }
@@ -45,7 +108,7 @@ $(document).ready(()=>{
                     error: function (res){
                         alert('Error')
                         console.log(res)
-                        msgInput.removeAttr('disabled')
+                        // msgInput.removeAttr('disabled')
                     }
                 })
             }
@@ -70,7 +133,7 @@ $(document).ready(()=>{
         // wait for response
         let message = msgInput.val()
         msgInput.val('')
-        msgInput.attr('disabled','disabled')
+        // msgInput.attr('disabled','disabled')
 
 
         // * send input message to server through ajax
@@ -79,15 +142,11 @@ $(document).ready(()=>{
             url: weburl,
             type: 'post',
             data:{
-                'id': 123456,
-                'query': message
+                'id': ids,
+                'query': message,
+                'OpenaiKey': key
             },
             success: function (res){
-                // if (res.code === -1){
-                //     alert("Connection to Server Error")
-                // }
-                // else {
-                // console.log(res)
                     res = JSON.parse(res)
                     for(var i = 0;i<res.Answer.length;i++) {
                         let answer = res.Answer[i]
@@ -97,22 +156,8 @@ $(document).ready(()=>{
                         }, 500)
                         msgInput.removeAttr('disabled')
 
-                        // $.ajax({
-                        //     url: '/codeResult',
-                        //     type: 'post',
-                        //     data:{
-                        //     },
-                        //     success: function (res){
-                        //
                         $('#result_display').html('<h>' + res.Answer + '</h><br>')
                         hljs.highlightAll()
-                        //     },
-                        //     error: function (res){
-                        //         alert('Result error')
-                        //         console.log(res)
-                        //     }
-                        // })
-                        // }
                     }
             },
             error: function (res){
@@ -123,40 +168,7 @@ $(document).ready(()=>{
         })
     })
 
-    // *** Result ***
-    // $('#result_display').click(function (){
-    //     $.ajax({
-    //         url: '/codeResult',
-    //         type: 'post',
-    //         data:{
-    //         },
-    //         success: function (res){
-    //             console.log(res.code)
-    //             $('#result_display').html('<pre><code contenteditable="true">' + res.code + '</code></pre>')
-    //             hljs.highlightAll()
-    //         },
-    //         error: function (res){
-    //             alert('Result error')
-    //             console.log(res)
-    //         }
-    //     })
-    // })
-
-
     // *** Dialog rendering ***
     // middle page
-    function generateMessage(msg){
-        return '<p class="dialog-msg">'+ msg +"</p>"
-    }
-    function generateDialog(user, msg){
-        return "<div class=\"conversation-dialog dialog-" + user.toLowerCase() + "\" data-role=\"" + user + "\">\n" +
-            "    <div class=\"dialog-portrait\">\n" +
-            "        <img src=\"../static/images/" + user.toLowerCase() + ".jpg\" class=\"dialog-portrait-img\">\n" +
-            "        <p class=\"dialog-portrait-name\">" + user + "</p>\n" +
-            "    </div>\n" +
-            "    <div class=\"dialog-msg-wrapper\">\n" +
-            "        <p class=\"dialog-msg\">" + msg + "</p>\n" +
-            "    </div>\n" +
-            "</div>"
-    }
+
 })

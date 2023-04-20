@@ -6,6 +6,7 @@
     <!-- bootstrap -->
     <link href="../static/js/plugin/bootstrap/bootstrap.min.css" rel="stylesheet">
     <script src="../static/js/plugin/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
     <!-- jquery -->
     <script src="../static/js/plugin/jquery.min.js"></script>
     <!-- icons -->
@@ -75,6 +76,7 @@
                         <div class="input-group input-msg">
                             <input required id="msgInput" name="message" type="text" class="form-control" placeholder="Enquiry">
                             <a class="btn btn-msg" type="submit"><i class="bi bi-send-fill"></i></a>
+                            <a class="btn btn-msg" onclick="clear_conversion();"><i class="bi bi-trash-fill"></i></a>
                         </div>
                     </form>
                 </div>

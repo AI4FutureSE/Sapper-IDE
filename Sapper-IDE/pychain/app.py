@@ -10,6 +10,9 @@ app = Flask(__name__)
 CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
+@app.route('/',methods = ['POST','GET'])
+def initapp():
+    return "Hello World"
 
 @app.route('/PromptSapper',methods = ['POST','GET'])
 def PromptSapper():

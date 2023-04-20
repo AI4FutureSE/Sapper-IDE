@@ -1,3 +1,23 @@
+/*
+----------------------------------------------------------------------------
+Project Name: [Sapper IDE]
+File: [index.js]
+Copyright (C) [2023] [Prompt Sapper]
+License: [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License]
+----------------------------------------------------------------------------
+This file is part of [Sapper IDE].
+[Sapper IDE] is free software: you can redistribute it and/or modify
+it under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License as published by
+the Creative Commons Corporation, either version 4.0 of the License,
+or (at your option) any later version.
+[Sapper IDE] is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License for more details.
+You should have received a copy of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+along with [Sapper IDE]. If not, see https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.
+----------------------------------------------------------------------------
+*/
 var ProjectList = [];
 // Variable of created block
 var Variable_xmlList = [];
@@ -47,6 +67,7 @@ var TraditionEngine = [];
 var RunPromptAspect = {}
 var PromptValue = {'Prompt_Name':[['Instruction', '']]}
 var ImportPromptValue = {}
+
 // ID of the prompt context block created
 var CreateExample = [];
 var BlockDebugIDs = ["input_value"]
@@ -773,18 +794,3 @@ function exploreSeparator() {
 
 designSeparator()
 exploreSeparator()
-// localStorage.setItem('ProjectValues', JSON.stringify({}));
-
-// var storedFile = localStorage.getItem('ProjectValues');
-// if (storedFile) {
-// const storedBlob = new Blob([storedFile], {type: 'application/json'});
-// loadJsonFile(storedBlob);
-//     storedFile = JSON.parse(storedFile);
-//     console.log(storedFile[key])
-//     for (var key in storedFile) {
-//         initIDE();
-//         ProjectValues[key] = storedFile[key]
-//         upload_project1(key, storedFile[key]);
-//     }
-// }
-

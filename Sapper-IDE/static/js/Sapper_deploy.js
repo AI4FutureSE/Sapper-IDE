@@ -1,3 +1,23 @@
+/*
+----------------------------------------------------------------------------
+Project Name: [Sapper IDE]
+File: [Sapper_deploy.js]
+Copyright (C) [2023] [Prompt Sapper]
+License: [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License]
+----------------------------------------------------------------------------
+This file is part of [Sapper IDE].
+[Sapper IDE] is free software: you can redistribute it and/or modify
+it under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License as published by
+the Creative Commons Corporation, either version 4.0 of the License,
+or (at your option) any later version.
+[Sapper IDE] is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License for more details.
+You should have received a copy of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+along with [Sapper IDE]. If not, see https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.
+----------------------------------------------------------------------------
+*/
 Blockly.Python['Prompt'] = function(block) {
     // TODO: Assemble Python into code variable.
     var text_prompt_value = block.getFieldValue('prompt_value');
@@ -5,16 +25,7 @@ Blockly.Python['Prompt'] = function(block) {
     return [text_prompt_value, Blockly.Python.ORDER_NONE];
 };
 Blockly.Python['Model'] = function(block) {
-    // TODO: Assemble JavaScript into code variable.
-    var text_model_value = block.getFieldValue('modelName');
-  // TODO: Change ORDER_NONE to the correct strength.
-    return text_model_value;
-};
-Blockly.Python['Tool_Model'] = function(block) {
-    // TODO: Assemble Python into code variable.
-    var text_model_value = block.getFieldValue('model_value');
-  // TODO: Change ORDER_NONE to the correct strength.
-    return text_model_value;
+    return block.getFieldValue('modelName');
 };
 Blockly.Python['Module'] = function(block) {
     var text_module_name = block.getFieldValue('Module_Name');
@@ -46,34 +57,25 @@ Blockly.Python['Module'] = function(block) {
 Blockly.Python['AI_Unit'] = function(block) {
     var text_unit_name = block.getFieldValue('Unit_Name');
     var statements_preunits = Blockly.Python.statementToCode(block, 'PreWorkers');
-    var value_prompt = Blockly.Python.valueToCode(block, 'Prompt', Blockly.Python.ORDER_ATOMIC);
     var value_model = Blockly.Python.valueToCode(block, 'Model', Blockly.Python.ORDER_ATOMIC);
+
     var prompt = block.getInputTargetBlock("Prompt");
     var promptId = prompt.id;
-    var promptname = prompt.getFieldValue("Prompt_Name");
     var example = prompt.getInputTargetBlock("prompt_value");
-    var examplename = [];
-    examplename.push(example.getFieldValue("Example_value"));
     var exampleId = [];
     exampleId.push(example.id);
-    var j=0;
+    var j;
     while(example.nextConnection.isConnected()){
         example = example.getNextBlock();
-        examplename.push(example.getFieldValue("Example_value"));
         exampleId.push(example.id);
     }
-    PythonPromptValues[promptname]={};
+    PythonPromptValues[promptId]=[];
     for(j =0;j<exampleId.length;j++){
-        PythonPromptValues[promptname][examplename[j]] = RunPromptAspect[exampleId[j]][1];
+        PythonPromptValues[promptId].push(RunPromptAspect[exampleId[j]]);
     }
-    var model = block.getInputTargetBlock('Model');
-    var enginetype = '';
-    var engine = model.getInputTargetBlock("Model") ? model.getInputTargetBlock("Model") : null;
-    enginetype = engine ? engine.type : '';
-    // TODO: Assemble JavaScript into code variable.
+
     AI_Unit = {}
     AI_Unit["Unit_Name"] = text_unit_name;
-    AI_Unit["prompt"] = value_prompt.replace("(", "").replace(")", "");
     AI_Unit["model"] = value_model.replace("(", "").replace(")", "");
     AI_Unit["preunits"] = []
     var code ="";
@@ -88,55 +90,32 @@ Blockly.Python['AI_Unit'] = function(block) {
             }
         }
     }
-    code += "if query[\"runflag\"]:\n"
-    code += "\t" + AI_Unit["Unit_Name"] + " = chain.worker(" + AI_Unit["prompt"] + ",[" + AI_Unit["preunits"].join(",") + "],"+ AI_Unit["model"] + ")\n";
-    code += "\tquery[\""+AI_Unit["Unit_Name"]+ "\"]=" + AI_Unit["Unit_Name"] + "\n"
+    code += "if sapper_query[\"runflag\"]:\n"
+    code += "\t" + AI_Unit["Unit_Name"] + " = chain.worker(\"" + promptId + "\",[" + AI_Unit["preunits"].join(",") + "],"+ AI_Unit["model"] + ")\n";
+    code += "\tsapper_query[\""+AI_Unit["Unit_Name"]+ "\"]=" + AI_Unit["Unit_Name"] + "\n"
 
     initvariables.push(AI_Unit["Unit_Name"])
     return "#*#*" + JSON.stringify({"Unit": [AI_Unit["Unit_Name"]], "Code": code});
-};
-Blockly.Python['Tool_Unit'] = function(block) {
-    var text_unit_name = block.getFieldValue('Unit_Name');
-    var statements_preunits = Blockly.Python.statementToCode(block, 'Preunits');
-    var value_prompt = Blockly.Python.valueToCode(block, 'Prompt', Blockly.Python.ORDER_ATOMIC);
-    var value_model = Blockly.Python.valueToCode(block, 'Model', Blockly.Python.ORDER_ATOMIC);
-    // TODO: Assemble Python into code variable.
-    AI_Unit = {}
-    AI_Unit["Unit_Name"] = text_unit_name;
 
-    AI_Unit["prompt"] = value_prompt.replace("(", "").replace(")", "");
-    AI_Unit["model"] = value_model.replace("(", "").replace(")", "");
-    AI_Unit["preunits"] = []
-    var code ="";
-    if (statements_preunits !== ""){
-        statements_preunits = statements_preunits.split("#*#*");
-        for (var i = 1; i < statements_preunits.length; i++) {
-            if(statements_preunits[i].includes("Unit")) {
-                AI_Unit["preunits"] = AI_Unit["preunits"].concat(JSON.parse(statements_preunits[i])["Unit"])
-            }
-            if(statements_preunits[i].includes("Code")){
-                code += JSON.parse(statements_preunits[i])["Code"]
-            }
-        }
-    }
-    code += AI_Unit["Unit_Name"] + " = chain.run_"+JSON.parse(AI_Unit["model"])["engine"].replace(" ","")+"(" + AI_Unit["prompt"] + ",[" + AI_Unit["preunits"].join(",") + "],"+ AI_Unit["model"] + ")\n";
-    return "#*#*" + JSON.stringify({"Unit": [AI_Unit["Unit_Name"]], "Code": code});
 };
 Blockly.Python['Set_value'] = function(block) {
   var value_variable = Blockly.Python.valueToCode(block, 'variable', Blockly.Python.ORDER_ATOMIC).replace("(", "").replace(")", "").replace("#*#*", "");
   var value_value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-    var code = ""
-    code += "if query[\"runflag\"]:\n";
-    code += "\t" + JSON.parse(value_variable)["Unit"] + " = " + value_value + "\n";
-    code += "\tquery[\"" + JSON.parse(value_variable)["Unit"] +"\"]=" +JSON.parse(value_variable)["Unit"]+ "\n";
-  return "#*#*" + JSON.stringify({"Code": code,"Unit": JSON.parse(value_variable)["Unit"]});
+  var code = "";
+  if(value_value.indexOf("#*#*")!==-1){
+      value_value = value_value.replace("(", "").replace(")", "").replace("#*#*", "");
+      code = JSON.parse(value_variable)["Unit"] + " = " + JSON.parse(value_value)["Unit"] + ";\n";
+  }
+  else{
+      code = JSON.parse(value_variable)["Unit"] + " = " + value_value + ";\n";
+  }
+  return "#*#*" + JSON.stringify({"Code": code,"Unit":JSON.parse(value_variable)["Unit"]});
 };
 Blockly.Python['Append_text'] = function(block) {
   var value_variable = Blockly.JavaScript.valueToCode(block, 'variable', Blockly.JavaScript.ORDER_ATOMIC).replace("(", "").replace(")", "").replace("#*#*", "");
   var value_value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC);
   var code = "";
-  code += "if query[\"runflag\"]:\n";
+  code += "if sapper_query[\"runflag\"]:\n";
   if(value_value.indexOf("#*#*")!==-1){
       value_value = value_value.replace("(", "").replace(")", "").replace("#*#*", "");
       code += "\t" +JSON.parse(value_variable)["Unit"] + " = " + JSON.parse(value_variable)["Unit"] + " + " + JSON.parse(value_value)["Unit"] + ";\n";
@@ -144,7 +123,7 @@ Blockly.Python['Append_text'] = function(block) {
   else{
       code += "\t" +JSON.parse(value_variable)["Unit"] + " = " + JSON.parse(value_variable)["Unit"] + " + " +value_value + ";\n";
   }
-  code += "\tquery[\"" + JSON.parse(value_variable)["Unit"] +"\"]=" +JSON.parse(value_variable)["Unit"] + "\n";
+  code += "\tsapper_query[\"" + JSON.parse(value_variable)["Unit"] +"\"]=" +JSON.parse(value_variable)["Unit"] + "\n";
   // TODO: Assemble JavaScript into code variable.
   return "#*#*" + JSON.stringify({"Code": code,"Unit": JSON.parse(value_variable)["Unit"]});
 };
@@ -188,8 +167,8 @@ Blockly.Python['Input'] = function(block) {
         recordinput = preunits[0];
     }
     for(var j = 0; j < preunits.length; j++){
-        code += "stop, query, "+preunits[j]+" = get_value(\""+preunits[j]+"\", request, query)\n"
-        code += "if stop and query[\"runflag\"]:\n\tquery[\"runflag\"] = False\n\tquery[\"input\"] = \""+preunits[j]+"\"\n\tsavequery(query)\n\treturn {'Answer': query[\"output\"]}\n"
+        code += "stop, sapper_query, "+preunits[j]+" = get_value(\""+preunits[j]+"\", sapper_request, sapper_query)\n"
+        code += "if stop and sapper_query[\"runflag\"]:\n\tsapper_query[\"runflag\"] = False\n\tsapper_query[\"input\"] = \""+preunits[j]+"\"\n\tsavequery(sapper_query)\n\treturn {'Answer': sapper_query[\"output\"]}\n"
 
     }
   return "#*#*" + JSON.stringify({"Unit": preunits, "Code": code});
@@ -211,8 +190,8 @@ Blockly.Python['Output'] = function(block) {
         }
     }
     for(var j = 0; j < preunits.length; j++){
-        code += "if query[\"runflag\"]:\n"
-        code += "\tquery[\"output\"].append(" +preunits[j]+ ")\n";
+        code += "if sapper_query[\"runflag\"]:\n"
+        code += "\tsapper_query[\"output\"].append(" +preunits[j]+ ")\n";
     }
   return "#*#*" + JSON.stringify({"Unit": preunits, "Code": code});
 };
@@ -264,36 +243,6 @@ Blockly.Python['APIEngine'] = function(block){
     configvalue["engine"] = model_name.replace(" ","");
 
     return [JSON.stringify(configvalue), Blockly.Python.ORDER_NONE];
-};
-Blockly.Python['LLM_top_p'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"top_p": text_name});
-};
-Blockly.Python['LLM_frequency'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"frequency_penalty": text_name});
-};
-Blockly.Python['LLM_presence'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"presence_penalty": text_name});
-};
-Blockly.Python['LLM_max_tokens'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"max_tokens": text_name});
-};
-Blockly.Python['LLM_stop_strs'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"stop_strs": text_name});
-};
-Blockly.Python['LLM_temperature'] = function(block) {
-    // TODO: Assemble Python into code variable.
-  var text_name = block.getFieldValue('config_value');
-  return "#*#*" + JSON.stringify({"temperature": text_name});
 };
 
 // Logic Unit
@@ -347,23 +296,24 @@ Blockly.Python['prompt_control'] = function(block) {
           Blockly.Python.injectId(Blockly.Python.STATEMENT_SUFFIX,
           block), Blockly.Python.INDENT) + branchInfo;
     }
-    if (branchInfo != ""){
+    if (branchInfo !== ""){
         branchInfo = branchInfo.split("#*#*");
-        for (var i = 1; i < branchInfo.length; i++) {
+        for (i = 1; i < branchInfo.length; i++) {
             if(branchInfo[i].includes("Code")){
+                console.log(branchInfo[i])
                 branchCode += JSON.parse(branchInfo[i])["Code"];
             }
         }
     }
-    if(branchCode==""){
+    if(branchCode===""){
         branchCode = "pass\n";
     }
     var branch_list = branchCode.split("\n");
     var branch_code = "";
-    for(var j = 0; j<branch_list.length-1;j++){
+    for(j = 0; j<branch_list.length-1;j++){
         branch_code += "\t" +branch_list[j] + "\n"
     }
-    code += (n == 0 ? 'if ' : 'elif ') + conditionCode + ':\n' + branch_code;
+    code += (n === 0 ? 'if ' : 'elif ') + conditionCode + ':\n' + branch_code;
     branchCode = "";
     ++n;
   } while (block.getInput('IF' + n));
@@ -375,7 +325,7 @@ Blockly.Python['prompt_control'] = function(block) {
           Blockly.Python.injectId(Blockly.Python.STATEMENT_SUFFIX,
           block), Blockly.Python.INDENT) + branchInfo;
     }
-    if (branchInfo != ""){
+    if (branchInfo !== ""){
         branchInfo = branchInfo.split("#*#*");
         for (var i = 1; i < branchInfo.length; i++) {
             if(branchInfo[i].includes("Code")){
@@ -383,7 +333,7 @@ Blockly.Python['prompt_control'] = function(block) {
             }
         }
     }
-    if(branchCode==""){
+    if(branchCode===""){
         branchCode = "pass\n";
     }
     branch_list = branchCode.split("\n");

@@ -79,7 +79,7 @@ Generate 500x500 pixel paintings according to Painting_Description.
 <Task Description>
 {{Description}}
 </Task Description>
-
+Note: Output cannot have the same name
 """
 
 decompose_template1 = """<Requirement Description>

@@ -1,3 +1,24 @@
+/*
+----------------------------------------------------------------------------
+Project Name: [Sapper IDE]
+File: [background.js]
+Copyright (C) [2023] [Prompt Sapper]
+License: [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License]
+----------------------------------------------------------------------------
+This file is part of [Sapper IDE].
+[Sapper IDE] is free software: you can redistribute it and/or modify
+it under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License as published by
+the Creative Commons Corporation, either version 4.0 of the License,
+or (at your option) any later version.
+[Sapper IDE] is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License for more details.
+You should have received a copy of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+along with [Sapper IDE]. If not, see https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.
+----------------------------------------------------------------------------
+*/
+
 // 初始化变量列表
 function initVariables() {
   Code_xmlList = [];
@@ -742,13 +763,13 @@ function deploymentCloud(){
         record[newinitvariables[i]] = "";
     }
     code += "initrecord = " + JSON.stringify(record) + "\n"
-    code += "query = update_request(initrecord, request)\n";
+    code += "sapper_query = update_request(initrecord, sapper_request)\n";
     for(i = 0; i<newinitvariables.length;i++){
         record[newinitvariables[i]] = "";
-        code += newinitvariables[i] + "=query[\""+newinitvariables[i]+"\"]\n";
+        code += newinitvariables[i] + "=sapper_query[\""+newinitvariables[i]+"\"]\n";
     }
-    code += "query[\"output\"] = []\n"
-    code+="if query[\"runflag\"]:\n    preInfo = \"\"\"" + PreInfor +"\"\"\"\n    query[\"preInfo\"]=preInfo\nif query[\"runflag\"]:\n    query[\"output\"].append(preInfo)\n    stop, query, Unit = get_value(\"preInfo\", request, query)\n"
+    code += "sapper_query[\"output\"] = []\n"
+    code+="if sapper_query[\"runflag\"]:\n    preInfo = \"\"\"" + PreInfor +"\"\"\"\n    sapper_query[\"preInfo\"]=preInfo\nif sapper_query[\"runflag\"]:\n    sapper_query[\"output\"].append(preInfo)\n    stop, sapper_query, Unit = get_value(\"preInfo\", sapper_request, sapper_query)\n"
     Blockly.Python.INFINITE_LOOP_TRAP = null;
     var code_info = Blockly.Python.workspaceToCode(demoWorkspace);
     code_info = code_info.split("#*#*");
@@ -781,6 +802,72 @@ function deploymentCloud(){
         alert("url :" + data)
     });
     });
+}
+function downloadpythoncode() {
+    var deployPreInfor = ''
+    initvariables = []
+    recordinput = ""
+    PythonPromptValues = {}
+    Blockly.JavaScript.workspaceToCode(demoWorkspace);
+    Blockly.Python.workspaceToCode(demoWorkspace);
+    $.ajax({
+        url:'http://localhost:5000/DeployPreInfo',
+        method: 'POST',
+        data: {
+            "prompt":JSON.stringify(PythonPromptValues),
+            "OpenAIKey": OpenAIKey,
+            // "GenCode":code
+        },
+        asyne: true
+    }).done(function (data1) {
+        var PreInfor = data1
+        var code = '';
+        var newinitvariables = [];
+        var myset = new Set(initvariables);//利用了Set结构不能接收重复数据的特点
+        for (var val of myset) {
+            newinitvariables.push(val)
+        }
+        newinitvariables.push("preInfo")
+        recordinput = "preInfo";
+        var record = {"id": "", "input": recordinput, "output": [], "runflag": ""}
+        for (i = 0; i < newinitvariables.length; i++) {
+            record[newinitvariables[i]] = "";
+        }
+        code += "initrecord = " + JSON.stringify(record) + "\n"
+        code += "sapper_query = update_request(initrecord, sapper_request)\n";
+        for (i = 0; i < newinitvariables.length; i++) {
+            record[newinitvariables[i]] = "";
+            code += newinitvariables[i] + "=sapper_query[\"" + newinitvariables[i] + "\"]\n";
+        }
+        code += "sapper_query[\"output\"] = []\n"
+        code += "if sapper_query[\"runflag\"]:\n    preInfo = \"\"\"" + PreInfor + "\"\"\"\n    sapper_query[\"preInfo\"]=preInfo\nif sapper_query[\"runflag\"]:\n    sapper_query[\"output\"].append(preInfo)\n    stop, sapper_query, Unit = get_value(\"preInfo\", sapper_request, sapper_query)\n"
+        Blockly.Python.INFINITE_LOOP_TRAP = null;
+        var code_info = Blockly.Python.workspaceToCode(demoWorkspace);
+        code_info = code_info.split("#*#*");
+        for (var i = 1; i < code_info.length; i++) {
+            if (code_info[i].includes("Code")) {
+                code += JSON.parse(code_info[i])["Code"]
+            }
+        }
+   var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:5000/download', true);
+        xhr.responseType = "blob";
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var blob = xhr.response;
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "compressed_files.zip";
+                link.click();
+            }
+        };
+        var dataToSend = JSON.stringify({"data": {
+            "prompt":JSON.stringify(PythonPromptValues),
+            "GenCode":code
+        }});
+        xhr.send(dataToSend);
+        });
 }
 
 // 显示用户的所有 project
@@ -1766,7 +1853,6 @@ function show_design(){
         document.getElementById('DesignDiv').style.display='none';
         document.getElementById('show_designpanel_button').style.backgroundColor="gainsboro";
     }
-
 }
 function splitSteps(){
     var require = document.getElementById("Require_display").value;
@@ -2195,7 +2281,7 @@ function createlogiccard(logic, index , logiccard){
       <div class="d-flex align-items-center">
         <h5 class="card-title me-2">${logic}</h5>
         <div class="input-group input-group-sm flex-grow-1">
-          <input type="text" class="form-control" placeholder="输入值1" value="${logiccard.input1}">
+          <input type="text" class="form-control" placeholder="Input1" value="${logiccard.input1}">
           <select class="form-select" aria-label="逻辑运算符">
             <option selected>=</option>
             <option>></option>
@@ -2204,7 +2290,7 @@ function createlogiccard(logic, index , logiccard){
             <option>≤</option>
             <option>≠</option>
           </select>
-          <input type="text" class="form-control" placeholder="输入值2" value="${logiccard.input2}">
+          <input type="text" class="form-control" placeholder="Input2" value="${logiccard.input2}">
         </div>
         <button type="button" class="btn btn-primary btn-sm ms-2" data-bs-toggle="collapse" data-bs-target="#card-content-${index}" aria-expanded="false" aria-controls="card-content-${index}"><i class="bi bi-chevron-down"></i></button>
         <button type="button" class="btn btn-danger btn-sm" onclick="removeCard(${index})">&times;</button>

@@ -32,6 +32,8 @@ def generate_deploypreInfor(query, OpenAIKey):
     openai.api_key = OpenAIKey
     # TODO figure out alternative stopping criterion for generating initial characters?
     question_prompt1 = question_prompt.replace("{{Prompts}}", query)
+    if len(question_prompt1) >=2000 :
+        question_prompt1 = question_prompt1[0:2000]
     expansion = program_Generate(prompt=question_prompt1, temperature=0.7, max_tokens=512, num_candidates=1)
     return expansion
 

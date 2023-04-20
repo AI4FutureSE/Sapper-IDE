@@ -64,15 +64,16 @@ def savequery(query):
     write_json(data)
 
 
-os.environ["OPENAI_API_KEY"] = "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"
-f1 = open("pychain/PromptTemplate.json", "r")
+
+f1 = open("pychain/PromptTemplate.json", "r", encoding='UTF-8')
 prompt_template = json.loads(f1.read())
 
 
-def sapper(request):
-    chain = sapperchain()
+def sapper(sapper_request):
+    chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
+
     {{GenCode}}
 
-    resetquery(query, initrecord)
-    return {'Answer': query["output"]}
+    resetquery(sapper_query, initrecord)
+    return {'Answer': sapper_query["output"]}

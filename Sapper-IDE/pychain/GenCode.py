@@ -64,61 +64,112 @@ def savequery(query):
     write_json(data)
 
 
-os.environ["OPENAI_API_KEY"] = "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"
-f1 = open("PromptTemplate.json", "r")
+
+f1 = open("PromptTemplate.json", "r", encoding='UTF-8')
 prompt_template = json.loads(f1.read())
 
 
-def sapper(request):
-    chain = sapperchain()
+def sapper(sapper_request):
+    chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","User_Specified_Conditions":"","Character_Setting":"","Personality":"","Backstory":"","Appearance":"","Image":"","preInfo":""}
-    query = update_request(initrecord, request)
-    User_Specified_Conditions=query["User_Specified_Conditions"]
-    Character_Setting=query["Character_Setting"]
-    Personality=query["Personality"]
-    Backstory=query["Backstory"]
-    Appearance=query["Appearance"]
-    Image=query["Image"]
-    preInfo=query["preInfo"]
-    query["output"] = []
-    if query["runflag"]:
-        preInfo = """Welcome! I'm an AI service that can help you create unique and believable characters with a backstory, setting, personality, and appearance. To begin, please provide me with the character type and personality traits you'd like me to use. I'll take it from there to create a unique character for you."""
-        query["preInfo"]=preInfo
-    if query["runflag"]:
-        query["output"].append(preInfo)
-        stop, query, Unit = get_value("preInfo", request, query)
-    stop, query, User_Specified_Conditions = get_value("User_Specified_Conditions", request, query)
-    if stop and query["runflag"]:
-        query["runflag"] = False
-        query["input"] = "User_Specified_Conditions"
-        savequery(query)
-        return {'Answer': query["output"]}
-    if query["runflag"]:
-        Character_Setting = chain.worker({"Character_Setting":["Instruction"]},[User_Specified_Conditions],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        query["Character_Setting"]=Character_Setting
-    if query["runflag"]:
-        Personality = chain.worker({"Personality":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        query["Personality"]=Personality
-    if query["runflag"]:
-        query["output"].append(Personality)
-    if query["runflag"]:
-        Backstory = chain.worker({"Backstory":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        query["Backstory"]=Backstory
-    if query["runflag"]:
-        query["output"].append(Backstory)
-    if query["runflag"]:
-        Appearance = chain.worker({"Appearance":["Instruction"]},[Character_Setting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        query["Appearance"]=Appearance
-    if query["runflag"]:
-        query["output"].append(Appearance)
-    if query["runflag"]:
-        Image = chain.worker({"Image":["Instruction"]},[Appearance],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        query["Image"]=Image
-    if query["runflag"]:
-        query["output"].append(Image)
+
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","aside":"","question":"","judge ":"","problem_analysis":"","code_generation":"","code":"","code_analysis":"","circulate":"","requirement":"","code_modification":"","preInfo":""}
+    sapper_query = update_request(initrecord, sapper_request)
+    aside=sapper_query["aside"]
+    question=sapper_query["question"]
+    judge =sapper_query["judge "]
+    problem_analysis=sapper_query["problem_analysis"]
+    code_generation=sapper_query["code_generation"]
+    code=sapper_query["code"]
+    code_analysis=sapper_query["code_analysis"]
+    circulate=sapper_query["circulate"]
+    requirement=sapper_query["requirement"]
+    code_modification=sapper_query["code_modification"]
+    preInfo=sapper_query["preInfo"]
+    sapper_query["output"] = []
+    if sapper_query["runflag"]:
+        preInfo = """Welcome to our AI service! This AI service helps you with programming-related tasks. To get started, provide us with a programming-related task and we will generate the solution in the form of code or text."""
+        sapper_query["preInfo"]=preInfo
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(preInfo)
+        stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
+    aside = 'input your question';
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(aside)
+    stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "question"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    if sapper_query["runflag"]:
+        judge  = chain.worker("dAe%Y04CXppXS+pv$7pK",[question],{"temperature":0.7,"max_tokens":1000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        sapper_query["judge "]=judge
+    if judge  != '1':
+        if sapper_query["runflag"]:
+            problem_analysis = chain.worker("MkR()k2p[-aU,U0l~@]z",[question],{"temperature":0.7,"max_tokens":2000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["problem_analysis"]=problem_analysis
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(problem_analysis)
+        if sapper_query["runflag"]:
+            code_generation = chain.worker("0@D@K1mugkQy5NKv!i%N",[problem_analysis],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["code_generation"]=code_generation
+        code = code_generation;
+    else:
+        code = question;
+
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(code)
+    if sapper_query["runflag"]:
+        code_analysis = chain.worker("-.F(79I]cXI,#X][Bsu|",[code],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+        sapper_query["code_analysis"]=code_analysis
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(code_analysis)
+    aside = 'If you\'re asking whether a code needs to be modified or not, please enter "Needs modification" if it does, or "No modification required" if it doesn\'t.';
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(aside)
+    stop, sapper_query, circulate = get_value("circulate", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "circulate"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    while circulate == 'Needs modification':
+        aside = 'Please enter the requirement';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(aside)
+        stop, sapper_query, requirement = get_value("requirement", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "requirement"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
+        if sapper_query["runflag"]:
+            code = code + requirement;
+            sapper_query["code"]=code
+        if sapper_query["runflag"]:
+            code_modification = chain.worker("CHStU|;dN?IkxcxeCFV;",[code],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["code_modification"]=code_modification
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(code_modification)
+        if sapper_query["runflag"]:
+            code_analysis = chain.worker("BFfzZym6E4!JOvT]JbNh",[code_modification],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["code_analysis"]=code_analysis
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(code_analysis)
+        aside = 'If you\'re asking whether a code needs to be modified or not, please enter "Needs modification" if it does, or "No modification required" if it doesn\'t.';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(aside)
+        stop, sapper_query, circulate = get_value("circulate", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "circulate"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
+        code = code_modification;
 
 
 
-    resetquery(query, initrecord)
-    return {'Answer': query["output"]}
+
+    resetquery(sapper_query, initrecord)
+    return {'Answer': sapper_query["output"]}

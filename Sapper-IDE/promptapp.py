@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file
 from flask_cors import CORS
 import json
 from run_prompt import *
@@ -10,6 +10,8 @@ from decompose import Generasteps
 from Metaprompt_gpt3 import gen_for_gpt3
 import subprocess
 from subprocess import PIPE
+import zipfile
+import io
 import requests
 # import gevent.pywsgi
 # import gevent.monkey
@@ -58,6 +60,48 @@ def Deploy():
         r = subprocess.run(args=code_cmd, shell=True, encoding='utf-8', stdout=PIPE)
         print(r.stdout)
         return "http://127.0.0.1:5001/PromptSapper"
+
+@app.route('/download',methods = ['POST'])
+def download():
+    data = request.get_json()
+    data = data["data"]
+    print(data)
+    # cmd = "pkill -f 'python pychain/app.py'"
+    # try:
+    #     subprocess.run(args=cmd, shell=True, encoding='utf-8', stdout=PIPE)
+    # except Exception as e:
+    #     print(e)
+    with open("pychain/PromptTemplate.json", 'w', encoding='utf-8') as f1:
+        json.dump(data["prompt"], f1, ensure_ascii=False)
+    f1.close()
+    with open("pychain/storage.json", 'w', encoding='utf-8') as f4:
+        json.dump([], f4, ensure_ascii=False)
+    f4.close()
+    f2 = open("pychain/DeployCodeTemp.py", "r").read()
+    # print(data["GenCode"])
+    GenCodeList = data["GenCode"].split("\n")
+    GenCode = GenCodeList[0] + "\n"
+    for i in range(1, len(GenCodeList)):
+        GenCode += "    " + GenCodeList[i] + "\n"
+    f2 = f2.replace("{{GenCode}}", GenCode).replace("\t","    ")
+    f3 = open("pychain/GenCode.py", "w", encoding="utf-8")
+    f3.write(f2)
+    f3.close()
+    # 创建一个临时的内存文件
+    memory_file = io.BytesIO()
+    # 发送文件到前端
+
+    with zipfile.ZipFile(memory_file, 'w') as myzip:
+        # 向压缩包中添加文件
+        myzip.write('pychain/app.py')
+        myzip.write('pychain/GenCode.py')
+        myzip.write('pychain/PromptTemplate.json')
+        myzip.write('pychain/storage.json')
+        myzip.write('pychain/sapperchain.py')
+        myzip.write('pychain/LLMConfigurator.py')
+    # 重置文件指针
+    memory_file.seek(0)
+    return send_file(memory_file, attachment_filename='compressed_files.zip', as_attachment=True)
 
 @app.route('/DeployPreInfo',methods = ['POST','GET'])
 def DeployPreInfo():
@@ -141,7 +185,6 @@ def Getprompt():
         # return generate_query_expansion(data['function'], data['message'])
         return json.dumps(res)
 
-
 @app.route('/SapperUnit',methods = ['POST','GET'])
 def SapperUnit():
     if request.method == 'POST':
@@ -189,9 +232,6 @@ def SapperUnit():
         except Exception as e:
             print(e)
             return str(e)
-
-
-
 
 if __name__ == '__main__':
     # app.run(processes=True,debug=False,port=5000,ssl_context=('fullchain.pem', 'privkey.key'),host='0.0.0.0')
