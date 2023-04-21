@@ -73,29 +73,26 @@ def maxiaoyuan(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","aside":"","question":"","judge ":"","problem_analysis":"","code_generation":"","code":"","code_analysis":"","circulate":"","requirement":"","code_modification":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","question":"","judge ":"","problem_analysis":"","code_generation":"","code":"","code_analysis":"","aside":"","circulate":"","requirement":"","code_modification":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
-    aside=sapper_query["aside"]
     question=sapper_query["question"]
     judge =sapper_query["judge "]
     problem_analysis=sapper_query["problem_analysis"]
     code_generation=sapper_query["code_generation"]
     code=sapper_query["code"]
     code_analysis=sapper_query["code_analysis"]
+    aside=sapper_query["aside"]
     circulate=sapper_query["circulate"]
     requirement=sapper_query["requirement"]
     code_modification=sapper_query["code_modification"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Welcome! You are now using our AI service to complete programming tasks. To get started, please provide a programming-related problem statement or a piece of code as input. Our AI will then analyze the problem statement or code and provide a solution approach, modified code, or code analysis as output. Let's get started!"""
+        preInfo = """Welcome! This AI service is designed to provide you with a programming-related solution approach, code analysis, and modified code. To get started, please provide a problem statement, code snippet, or modification requirements. If you provide a problem statement, our AI service will generate a solution approach. If you provide a code snippet, our AI service will provide a code analysis. If you provide modification requirements, our AI service will modify the code and provide you with the modified code."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    aside = 'input your question'
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(aside)
     stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
@@ -112,19 +109,17 @@ def maxiaoyuan(sapper_request):
         if sapper_query["runflag"]:
             sapper_query["output"].append(problem_analysis)
         if sapper_query["runflag"]:
-            code_generation = chain.worker("0@D@K1mugkQy5NKv!i%N",[problem_analysis],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            code_generation = chain.worker("0@D@K1mugkQy5NKv!i%N",[question,problem_analysis],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
             sapper_query["code_generation"]=code_generation
+        code = code_generation;
         if sapper_query["runflag"]:
-            sapper_query["output"].append(code_generation)
-        code = code_generation
+            sapper_query["output"].append(code)
     else:
-        code = question
+        code = question;
 
     if sapper_query["runflag"]:
         code_analysis = chain.worker("-.F(79I]cXI,#X][Bsu|",[code],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
         sapper_query["code_analysis"]=code_analysis
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(code)
     if sapper_query["runflag"]:
         sapper_query["output"].append(code_analysis)
     aside = 'If you\'re asking whether a code needs to be modified or not, please enter "Needs modification" if it does, or "No modification required" if it doesn\'t.';
@@ -137,7 +132,7 @@ def maxiaoyuan(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     while circulate == 'Needs modification':
-        aside = 'Please enter the requirement'
+        aside = 'Please enter the requirement';
         if sapper_query["runflag"]:
             sapper_query["output"].append(aside)
         stop, sapper_query, requirement = get_value("requirement", sapper_request, sapper_query)
@@ -147,10 +142,7 @@ def maxiaoyuan(sapper_request):
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         if sapper_query["runflag"]:
-            code = code + requirement
-            sapper_query["code"]=code
-        if sapper_query["runflag"]:
-            code_modification = chain.worker("CHStU|;dN?IkxcxeCFV;",[code],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            code_modification = chain.worker("CHStU|;dN?IkxcxeCFV;",[code,requirement],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
             sapper_query["code_modification"]=code_modification
         if sapper_query["runflag"]:
             sapper_query["output"].append(code_modification)
@@ -168,12 +160,8 @@ def maxiaoyuan(sapper_request):
             sapper_query["input"] = "circulate"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        code = code_modification
+        code = code_modification;
 
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(code)
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(code_analysis)
 
 
 

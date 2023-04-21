@@ -10,6 +10,7 @@ from UserProject.sixiaopin.GenCode import sixiaopin
 from UserProject.maxiaoyuan.GenCode import maxiaoyuan
 from UserProject.chunxiaoxie.GenCode import chunxiaoxie
 from UserProject.xinxiaozhu.GenCode import xinxiaozhu
+from UserProject.huixiaoshi.GenCode import huixiaoshi
 # import gevent.pywsgi
 # import gevent.monkey
 # from flask_sslify import SSLify
@@ -18,11 +19,39 @@ app = Flask(__name__)
 CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
-@app.route('/',methods = ['POST','GET'])
-def initapp():
-    return "Hello World"
+@app.route('/xinxiaozhu',methods = ['POST','GET'])
+def web_xinxiaozhu():
+    return render_template("xinxiaozhu.html")
 
-@app.route('/Chatbot',methods = ['POST','GET'])
+@app.route('/chunxiaoxie',methods = ['POST','GET'])
+def web_chunxiaoxie():
+    return render_template("chunxiaoxie.html")
+
+@app.route('/huixiaoshi',methods = ['POST','GET'])
+def web_huixiaoshi():
+    return render_template("huixiaoshi.html")
+
+@app.route('/sixiaopin',methods = ['POST','GET'])
+def web_sixiaopin():
+    return render_template("sixiaopin.html")
+
+@app.route('/wenxiaojie',methods = ['POST','GET'])
+def web_wenxiaojie():
+    return render_template("wenxiaojie.html")
+
+@app.route('/qingxiaoxie',methods = ['POST','GET'])
+def web_qingxiaoxie():
+    return render_template("qingxiaoxie.html")
+
+@app.route('/maxiaoyuan',methods = ['POST','GET'])
+def web_maxiaoyuan():
+    return render_template("maxiaoyuan.html")
+
+@app.route('/yunxiaojuan',methods = ['POST','GET'])
+def web_yunxiaojuan():
+    return render_template("yunxiaojuan.html")
+
+@app.route('/ChatbotUrl',methods = ['POST','GET'])
 def Sapper_Chatbot():
     if request.method == 'POST':
         query = request.form
@@ -32,7 +61,7 @@ def Sapper_Chatbot():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/Todos',methods = ['POST','GET'])
+@app.route('/TodosUrl',methods = ['POST','GET'])
 def Sapper_Todos():
     if request.method == 'POST':
         query = request.form
@@ -42,7 +71,7 @@ def Sapper_Todos():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/wenxiaojie',methods = ['POST','GET'])
+@app.route('/wenxiaojieUrl',methods = ['POST','GET'])
 def Sapper_wenxiaojie():
     if request.method == 'POST':
         query = request.form
@@ -52,7 +81,7 @@ def Sapper_wenxiaojie():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/qingxiaoxie',methods = ['POST','GET'])
+@app.route('/qingxiaoxieUrl',methods = ['POST','GET'])
 def Sapper_qingxaioxie():
     if request.method == 'POST':
         query = request.form
@@ -62,7 +91,7 @@ def Sapper_qingxaioxie():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/yunxiaojuan',methods = ['POST','GET'])
+@app.route('/yunxiaojuanUrl',methods = ['POST','GET'])
 def Sapper_yunxiaojuan():
     if request.method == 'POST':
         query = request.form
@@ -72,7 +101,7 @@ def Sapper_yunxiaojuan():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/sixiaopin',methods = ['POST','GET'])
+@app.route('/sixiaopinUrl',methods = ['POST','GET'])
 def Sapper_sixiaopin():
     if request.method == 'POST':
         query = request.form
@@ -82,7 +111,7 @@ def Sapper_sixiaopin():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/maxiaoyuan',methods = ['POST','GET'])
+@app.route('/maxiaoyuanUrl',methods = ['POST','GET'])
 def Sapper_maxiaoyuan():
     if request.method == 'POST':
         query = request.form
@@ -92,7 +121,7 @@ def Sapper_maxiaoyuan():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/chunxiaoxie',methods = ['POST','GET'])
+@app.route('/chunxiaoxieUrl',methods = ['POST','GET'])
 def Sapper_chunxiaoxie():
     if request.method == 'POST':
         query = request.form
@@ -102,12 +131,22 @@ def Sapper_chunxiaoxie():
         # answer是json文件
         return json.dumps(answer)
 
-@app.route('/xinxiaozhu',methods = ['POST','GET'])
+@app.route('/xinxiaozhuUrl',methods = ['POST','GET'])
 def Sapper_xinxioazhu():
     if request.method == 'POST':
         query = request.form
         print(query)
         answer = xinxiaozhu(query)
+        print(json.dumps(answer))
+        # answer是json文件
+        return json.dumps(answer)
+
+@app.route('/huixiaoshiUrl',methods = ['POST','GET'])
+def Sapper_huixiaoshi():
+    if request.method == 'POST':
+        query = request.form
+        print(query)
+        answer = huixiaoshi(query)
         print(json.dumps(answer))
         # answer是json文件
         return json.dumps(answer)

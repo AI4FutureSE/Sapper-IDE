@@ -86,7 +86,7 @@ function initIDE() {
   document.getElementById("blocklyDiv").innerHTML = "";
   // 创建Blockly工作区
   demoWorkspace = Blockly.inject('blocklyDiv', {
-    media: 'static/media/',
+    media: '../static/media/',
     toolbox: document.getElementById('toolbox'),
     collapse: false,
     scrollbars: true,
@@ -1513,7 +1513,7 @@ function show_prompt(){
         document.getElementById('PromptDiv').style.display='block';
         document.getElementById("CreatePromptDiv").innerHTML = "";
         PromptWorkspace = Blockly.inject('CreatePromptDiv',{
-          media: 'static/media/',
+          media: '../static/media/',
           toolbox: document.getElementById('prompttoolbox'),
           collapse : false,
           grid: {
@@ -1710,7 +1710,7 @@ function show_model(){
         var workxml = Blockly.Xml.workspaceToDom(ModelWorkspace);
         document.getElementById("CreateModelDiv").innerHTML = "";
         ModelWorkspace = Blockly.inject('CreateModelDiv',{
-            media: 'static/media/',
+            media: '../static/media/',
             toolbox: document.getElementById('modeltoolbox'),
             collapse : true,
             comments : true,
@@ -1937,7 +1937,7 @@ function shift_view(select){
         var workxml = Blockly.Xml.workspaceToDom(demoWorkspace);
         document.getElementById("blocklyDiv").innerHTML = "";
         demoWorkspace = Blockly.inject('blocklyDiv',{
-          media: 'static/media/',
+          media: '../static/media/',
           toolbox: document.getElementById('toolbox'),
           collapse : false,
           scrollbars : true,

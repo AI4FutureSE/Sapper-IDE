@@ -1,7 +1,5 @@
 import time
-
 import openai
-
 
 # openai.api_key = "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"
 def gpt3(prompt, t, max_tokens):

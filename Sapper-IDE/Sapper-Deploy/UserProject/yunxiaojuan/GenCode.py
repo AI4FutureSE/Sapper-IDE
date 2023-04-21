@@ -114,7 +114,7 @@ def yunxiaojuan(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Welcome to our AI service! With this AI service, you can analyze an erroneous answer given to a question and provide an explanation for the mistake, as well as identify any knowledge gaps that may be lacking. You can also generate corresponding flowcharts based on user requirements. To get started, simply input the required information in the appropriate fields and our AI will complete the task for you. Thank you for using our AI service!"""
+        preInfo = """Hi there! Welcome to our AI Service. With this service, you can easily generate corresponding flowcharts based on user requirements. All you need to do is enter the user requirements in the given field and the flowchart will be automatically generated for you. We also have an analysis feature where you can analyze an erroneous answer given to a question and provide an explanation for the mistake, as well as provide advice for further learning. Let's get started!"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
@@ -377,11 +377,9 @@ def yunxiaojuan(sapper_request):
             if sapper_query["runflag"]:
                 article = chain.worker("RZS8USKW(Xn=y]K[L~3R",[article_all],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["article"]=article
-            help = 'Please enterwhether to modify (input True to modify，input False to not modify)';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(article)
-            if sapper_query["runflag"]:
-                sapper_query["output"].append(help)
+            help = 'Please enterwhether to modify (input True to modify，input False to not modify)';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(help)
             stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
@@ -417,6 +415,8 @@ def yunxiaojuan(sapper_request):
                 if sapper_query["runflag"]:
                     article = chain.worker("Jfm~nyk.4#YY5~r%zwMC",[article_all],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                     sapper_query["article"]=article
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(article)
                 help = 'Please enterwhether to modify (input True to modify，input False to not modify)';
                 if sapper_query["runflag"]:
                     sapper_query["output"].append(help)
@@ -426,14 +426,6 @@ def yunxiaojuan(sapper_request):
                     sapper_query["input"] = "judge"
                     savequery(sapper_query)
                     return {'Answer': sapper_query["output"]}
-                if sapper_query["runflag"]:
-                    sapper_query["output"].append(article)
-                if sapper_query["runflag"]:
-                    sapper_query["output"].append(help)
-                if sapper_query["runflag"]:
-                    sapper_query["output"].append(help)
-                if sapper_query["runflag"]:
-                    sapper_query["output"].append(judge)
 
 
         select = '4';
@@ -657,9 +649,7 @@ def yunxiaojuan(sapper_request):
                 information = chain.worker("-XTt`,;!QqaFU-CXKE6^",[defind],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["information"]=information
             if sapper_query["runflag"]:
-                sapper_query["output"].append(information)
-            if sapper_query["runflag"]:
-                information = information + 'The materials needed for the questions:';
+                information = information + '.The materials needed for the questions:';
                 sapper_query["information"]=information
             if sapper_query["runflag"]:
                 information = information + material;
@@ -678,17 +668,12 @@ def yunxiaojuan(sapper_request):
                 information = chain.worker("OH;4zipv`UT[yNNB%WHd",[defind],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["information"]=information
             if sapper_query["runflag"]:
-                sapper_query["output"].append(information)
-            if sapper_query["runflag"]:
                 defined__questuin = chain.worker("H]*u8G#wbL*6$Zk0-)NR",[information],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["defined__questuin"]=defined__questuin
             if sapper_query["runflag"]:
                 sapper_query["output"].append(defined__questuin)
 
 
-    if sapper_query["runflag"]:
-        question_attribute = question_attribute + 'The difficulty level of generating questions:';
-        sapper_query["question_attribute"]=question_attribute
 
 
 

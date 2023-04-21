@@ -2,8 +2,8 @@ from flask import Flask, request, render_template, send_file
 from flask_cors import CORS
 import json
 from run_prompt import *
-# from prompt_repository.search_by_bert import search_by_keyword
-from ExplorationView.exploration_view import exploration
+
+from exploration_view import exploration
 from clarify import generate_query_expansion
 from deployproInfor import generate_deploypreInfor
 from decompose import Generasteps
@@ -24,22 +24,58 @@ CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
 
-@app.route('/promptsapper')
+@app.route('/get_project_data',methods = ['POST','GET'])
+def get_json_data():
+    data = request.form
+    print(data)
+    with open('static/project/' + data['project'] + '.json', 'r',encoding='UTF-8') as file:
+        jsondata = json.load(file)
+    return json.dumps(jsondata)
+
+@app.route('/project/ChunXiaoXie')
+def project_chunxiaoxie():
+    return render_template("project/chunxiaoxie.html")
+
+@app.route('/project/MaXiaoYuan')
+def project_maxiaoyuan():
+    return render_template("project/maxiaoyuan.html")
+
+@app.route('/project/HuiXiaoShi')
+def project_hunxiaoshi():
+    return render_template("project/huixiaoshi.html")
+
+@app.route('/project/QingXiaoXie')
+def project_qingxiaoxie():
+    return render_template("project/qingxiaoxie.html")
+
+@app.route('/project/SiXiaoPin')
+def project_sixiaopin():
+    return render_template("project/sixiaopin.html")
+
+@app.route('/project/YunXiaoJuan')
+def project_yunxiaojuan():
+    return render_template("project/yunxiaojuan.html")
+
+@app.route('/project/XinXiaoZhu')
+def project_xinxiaozhu():
+    return render_template("project/xinxiaozhu.html")
+
+@app.route('/project/WenXiaoJie')
+def project_wenxiaojie():
+    return render_template("project/wenxiaojie.html")
+
+@app.route('/sapperIDE')
 def index():
     return render_template("PromptSapper.html")
+
 @app.route('/sapper')
 def sapperuser():
-    return render_template("index.html")
+    return render_template("sapper.html")
 
 @app.route('/Deploy',methods = ['POST','GET'])
 def Deploy():
     if request.method == 'POST':
         data = request.form
-        # cmd = "pkill -f 'python pychain/app.py'"
-        # try:
-        #     subprocess.run(args=cmd, shell=True, encoding='utf-8', stdout=PIPE)
-        # except Exception as e:
-        #     print(e)
         with open("pychain/PromptTemplate.json", 'w', encoding='utf-8') as f1:
             json.dump(data["prompt"], f1, ensure_ascii=False)
         f1.close()
@@ -47,7 +83,6 @@ def Deploy():
             json.dump([], f4, ensure_ascii=False)
         f4.close()
         f2 = open("pychain/DeployCodeTemp.py", "r").read()
-        # print(data["GenCode"])
         GenCodeList = data["GenCode"].split("\n")
         GenCode = GenCodeList[0] + "\n"
         for i in range(1, len(GenCodeList)):
@@ -66,11 +101,6 @@ def download():
     data = request.get_json()
     data = data["data"]
     print(data)
-    # cmd = "pkill -f 'python pychain/app.py'"
-    # try:
-    #     subprocess.run(args=cmd, shell=True, encoding='utf-8', stdout=PIPE)
-    # except Exception as e:
-    #     print(e)
     with open("pychain/PromptTemplate.json", 'w', encoding='utf-8') as f1:
         json.dump(data["prompt"], f1, ensure_ascii=False)
     f1.close()
@@ -78,7 +108,6 @@ def download():
         json.dump([], f4, ensure_ascii=False)
     f4.close()
     f2 = open("pychain/DeployCodeTemp.py", "r").read()
-    # print(data["GenCode"])
     GenCodeList = data["GenCode"].split("\n")
     GenCode = GenCodeList[0] + "\n"
     for i in range(1, len(GenCodeList)):
@@ -87,9 +116,7 @@ def download():
     f3 = open("pychain/GenCode.py", "w", encoding="utf-8")
     f3.write(f2)
     f3.close()
-    # 创建一个临时的内存文件
     memory_file = io.BytesIO()
-    # 发送文件到前端
 
     with zipfile.ZipFile(memory_file, 'w') as myzip:
         # 向压缩包中添加文件

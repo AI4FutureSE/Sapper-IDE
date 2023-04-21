@@ -96,7 +96,7 @@ def qingxiaoxie(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Welcome! You are about to use our AI Writing Assistant. Our AI service is designed to provide guidance for writing in any genre and for any purpose, as well as help you extract and refine key elements in a piece of material. To get started, please provide us with the genre and purpose of your article, as well as the material and key points you want to focus on. We look forward to helping you write a great article!"""
+        preInfo = """Hi there! Welcome to our AI Writing service. We're here to help you craft the perfect article. To get started, please provide us with the genre you would like to write in and the purpose of your article. We will then provide you with key points and a basic approach for writing in that genre. Thanks for using our AI Writing service!"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
@@ -151,7 +151,7 @@ def qingxiaoxie(sapper_request):
             Writing_ideas = chain.worker("P[mqG{UFlCb_e28Y0oHr",[Writing_style,Content_integration],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
             sapper_query["Writing_ideas"]=Writing_ideas
         if sapper_query["runflag"]:
-            Write = chain.worker("Z7@65%sS/rqT+)JVI/-e",[Genre,Writing_ideas],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+            Write = chain.worker(";z-40NbF9UB%@NGcL9O+",[Genre,Writing_ideas],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
             sapper_query["Write"]=Write
         if sapper_query["runflag"]:
             sapper_query["output"].append(Write)
@@ -163,7 +163,7 @@ def qingxiaoxie(sapper_request):
         if sapper_query["runflag"]:
             sapper_query["output"].append(System)
         if sapper_query["runflag"]:
-            Template_writing = chain.worker("C`L:m:BPLn=~^zox~Ut1",[Genre,Writing_purpose,Writing_style],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+            Template_writing = chain.worker("^5aIGNf~VZ,JoLZ#:%_)",[Genre,Writing_purpose,Writing_style],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
             sapper_query["Template_writing"]=Template_writing
         if sapper_query["runflag"]:
             sapper_query["output"].append(Template_writing)
@@ -243,7 +243,7 @@ def qingxiaoxie(sapper_request):
                         Writing_ideas = chain.worker("KvcJaM3?Eh@baX3pF,rj",[Writing_style,Content_integration],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
                         sapper_query["Writing_ideas"]=Writing_ideas
                     if sapper_query["runflag"]:
-                        Write = chain.worker("VgPy}3u;za~`tc|(K+9X",[Genre,Writing_ideas],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+                        Write = chain.worker("8%zM0l}u{JgEmEIzW#^h",[Genre,Writing_ideas],{"temperature":0.3,"max_tokens":4000,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
                         sapper_query["Write"]=Write
                     if sapper_query["runflag"]:
                         sapper_query["output"].append(Write)

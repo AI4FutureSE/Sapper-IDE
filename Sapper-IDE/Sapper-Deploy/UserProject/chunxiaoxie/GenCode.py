@@ -73,7 +73,7 @@ def chunxiaoxie(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","Text_type":"","bot_one":"","Reply1":"","question":"","history":"","Reply2":"","new_requirement":"","advices":"","Reply3":"","wented_knowledge":"","知识":"","reply":"","Reply4":"","went_rewrite":"","history_knowladge":"","reply10":"","knowledge_type":"","rewrite_better":"","Reply5":"","went_add":"","Reply6":"","choose":"","Outline":"","Reply7":"","enrich_part":"","rich_outline":"","短文本":"","Reply8":"","poilsh_part":"","reply9":"","polish_dirction":"","Polish":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","Text_type":"","bot_one":"","Reply1":"","question":"","history":"","Reply2":"","new_requirement":"","advices":"","Reply3":"","wented_knowledge":"","知识":"","reply":"","Reply4":"","went_rewrite":"","rewrite_better":"","Reply5":"","went_add":"","Reply6":"","choose":"","Outline":"","Reply7":"","enrich_part":"","rich_outline":"","短文本":"","Reply8":"","poilsh_part":"","reply9":"","polish_dirction":"","Polish":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
     Text_type=sapper_query["Text_type"]
     bot_one=sapper_query["bot_one"]
@@ -89,9 +89,6 @@ def chunxiaoxie(sapper_request):
     reply=sapper_query["reply"]
     Reply4=sapper_query["Reply4"]
     went_rewrite=sapper_query["went_rewrite"]
-    history_knowladge=sapper_query["history_knowladge"]
-    reply10=sapper_query["reply10"]
-    knowledge_type=sapper_query["knowledge_type"]
     rewrite_better=sapper_query["rewrite_better"]
     Reply5=sapper_query["Reply5"]
     went_add=sapper_query["went_add"]
@@ -110,7 +107,8 @@ def chunxiaoxie(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Hi there! I'm Chun Chun, your personal writing assistant. I'm here to provide you with the writing advice and materials you need, and to help you when you lack inspiration. To get started, simply tell me the type of text you'd like to write. I'll do my best to provide you with the best materials and tips to help you write the perfect piece."""
+        preInfo = """Hi there! 
+    I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect {{text type}}. To get started, please provide me with the topic, content and word count of the text you wish to write. I'll then provide you with the best writing advice, materials and resources to help you create it."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
@@ -187,7 +185,7 @@ def chunxiaoxie(sapper_request):
     reply = 'Please identify the parts you want to use and divide them into two parts based on whether or not they need to be abbreviated.';
     if sapper_query["runflag"]:
         sapper_query["output"].append(reply)
-    Reply4 = "Please input any extraneous knowledge you have, and we will process it into the final prompt. Input 'over' to stop..";
+    Reply4 = "Please input any extraneous knowledge you have. Input 'over' to stop..";
     if sapper_query["runflag"]:
         sapper_query["output"].append(Reply4)
     stop, sapper_query, went_rewrite = get_value("went_rewrite", sapper_request, sapper_query)
@@ -197,21 +195,11 @@ def chunxiaoxie(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     while went_rewrite != 'over':
-        reply10 = 'Please input the type of this knowledge.';
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(reply10)
-        stop, sapper_query, knowledge_type = get_value("knowledge_type", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "knowledge_type"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
         if sapper_query["runflag"]:
             rewrite_better = chain.worker("11@vQnzYWEwP^d?2s=Mu",[went_rewrite],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
             sapper_query["rewrite_better"]=rewrite_better
         if sapper_query["runflag"]:
-            history_knowladge = chain.worker("1(dZ-.Q`u-Z#d.KZd8xB",[history_knowladge,reply10,reply10,knowledge_type,rewrite_better],{"engine":"PythonREPL"})
-            sapper_query["history_knowladge"]=history_knowladge
+            sapper_query["output"].append(rewrite_better)
         if sapper_query["runflag"]:
             sapper_query["output"].append(Reply4)
         stop, sapper_query, went_rewrite = get_value("went_rewrite", sapper_request, sapper_query)
@@ -221,7 +209,7 @@ def chunxiaoxie(sapper_request):
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
 
-    Reply5 = "Please input any knowledge that you think doesn't need to be optimized, or any additional content you want to add to the prompt.";
+    Reply5 = 'Please input any knowledge that any additional content you want to add to the prompt.';
     if sapper_query["runflag"]:
         sapper_query["output"].append(Reply5)
     stop, sapper_query, went_add = get_value("went_add", sapper_request, sapper_query)
@@ -241,7 +229,7 @@ def chunxiaoxie(sapper_request):
         return {'Answer': sapper_query["output"]}
     if choose == '1':
         if sapper_query["runflag"]:
-            Outline = chain.worker("R;GpCSDc8pqReTVoq*r8",[went_add,history_knowladge,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            Outline = chain.worker("R;GpCSDc8pqReTVoq*r8",[went_add,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
             sapper_query["Outline"]=Outline
         if sapper_query["runflag"]:
             sapper_query["output"].append(Outline)
@@ -271,7 +259,7 @@ def chunxiaoxie(sapper_request):
 
     elif choose == '2':
         if sapper_query["runflag"]:
-            短文本 = chain.worker("+R5T2GO$%C^Md}%aum_1",[went_add,history_knowladge,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            短文本 = chain.worker("+R5T2GO$%C^Md}%aum_1",[went_add,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
             sapper_query["短文本"]=短文本
         if sapper_query["runflag"]:
             sapper_query["output"].append(短文本)

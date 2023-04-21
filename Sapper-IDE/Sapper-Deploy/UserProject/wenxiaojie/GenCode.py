@@ -65,7 +65,7 @@ def savequery(query):
 
 
 
-f1 = open("UserProject/wenxiaojie/PromptTemplate.json", "r")
+f1 = open("UserProject/wenxiaojie/PromptTemplate.json", "r", encoding='UTF-8')
 prompt_template = json.loads(f1.read())
 
 
@@ -73,7 +73,7 @@ def wenxiaojie(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","hint":"","theme":"","reader":"","genre":"","General":"","idea":"","materials ":"","Personalized":"","human":"","human1":"","subject":"","material":"","mold_piece":"","syuff":"","stuff":"","Expanding":"","Assessing":"","sentence":"","area":"","module":"","request":"","Rewriting":"","incomplete":"","Completing":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","hint":"","theme":"","reader":"","genre":"","General":"","idea":"","materials ":"","Personalized":"","human":"","human1":"","mold_piece":"","stuff":"","Expanding":"","Assessing":"","module":"","request":"","Rewriting":"","incomplete":"","Completing":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
     hint=sapper_query["hint"]
     theme=sapper_query["theme"]
@@ -85,15 +85,10 @@ def wenxiaojie(sapper_request):
     Personalized=sapper_query["Personalized"]
     human=sapper_query["human"]
     human1=sapper_query["human1"]
-    subject=sapper_query["subject"]
-    material=sapper_query["material"]
     mold_piece=sapper_query["mold_piece"]
-    syuff=sapper_query["syuff"]
     stuff=sapper_query["stuff"]
     Expanding=sapper_query["Expanding"]
     Assessing=sapper_query["Assessing"]
-    sentence=sapper_query["sentence"]
-    area=sapper_query["area"]
     module=sapper_query["module"]
     request=sapper_query["request"]
     Rewriting=sapper_query["Rewriting"]
@@ -102,15 +97,12 @@ def wenxiaojie(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """
-    Welcome! I'm an AI service that helps you generate an article outline, rewrite an article, or complete a sentence. To get started, please give me the details of the task you'd like me to complete, such as the theme, reader, genre, material, idea, mold_piece and request. I'll take these details and generate the output you need."""
+        preInfo = """Hi there! Welcome to our AI Service. We can help you generate outlines and articles quickly. To get started, please input a theme, reader, genre, general outline, idea, material, mold_piece and stu_pieces according to the instructions given. Then, our AI service will generate an outline or article that meets your requirements. Let's get started and create something great!"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    if sapper_query["runflag"]:
-        hint = 'Now to generate the outline of the article you want, enter the theme of the article, the reader and the article genre, the general idea of the article, and what materials the article should include'
-        sapper_query["hint"]=hint
+    hint = 'Now to generate the outline of the article you want, enter the theme of the article, the reader and the article genre, the general idea of the article, and what materials the article should include';
     if sapper_query["runflag"]:
         sapper_query["output"].append(hint)
     stop, sapper_query, theme = get_value("theme", sapper_request, sapper_query)
@@ -153,9 +145,7 @@ def wenxiaojie(sapper_request):
         sapper_query["Personalized"]=Personalized
     if sapper_query["runflag"]:
         sapper_query["output"].append(Personalized)
-    if sapper_query["runflag"]:
-        hint = 'Whether to start expanding (1, start expanding；2, do not start expanding)'
-        sapper_query["hint"]=hint
+    hint = 'Whether to start expanding (1, start expanding；2, do not start expanding)';
     if sapper_query["runflag"]:
         sapper_query["output"].append(hint)
     stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
@@ -165,24 +155,20 @@ def wenxiaojie(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     while human == '1':
-        if sapper_query["runflag"]:
-            human1 = 'a'
-            sapper_query["human1"]=human1
-        if sapper_query["runflag"]:
-            hint = 'Enter the idea you want to expand and the material you want to use'
-            sapper_query["hint"]=hint
+        human1 = 'a';
+        hint = 'Enter the idea you want to expand and the material you want to use';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
-        stop, sapper_query, subject = get_value("subject", sapper_request, sapper_query)
+        stop, sapper_query, mold_piece = get_value("mold_piece", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "subject"
+            sapper_query["input"] = "mold_piece"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        stop, sapper_query, material = get_value("material", sapper_request, sapper_query)
+        stop, sapper_query, stuff = get_value("stuff", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "material"
+            sapper_query["input"] = "stuff"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         while human1 == 'a':
@@ -192,13 +178,11 @@ def wenxiaojie(sapper_request):
             if sapper_query["runflag"]:
                 sapper_query["output"].append(Expanding)
             if sapper_query["runflag"]:
-                Assessing = chain.worker("iCz{0McG6!2Am}YbOG%A",[mold_piece,syuff,Expanding],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+                Assessing = chain.worker("iCz{0McG6!2Am}YbOG%A",[mold_piece,stuff,Expanding],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
                 sapper_query["Assessing"]=Assessing
             if sapper_query["runflag"]:
                 sapper_query["output"].append(Assessing)
-            if sapper_query["runflag"]:
-                hint = 'Whether this expanded text is satisfactory (a, not satisfied, rewritten; b, satisfied, expand the next one).'
-                sapper_query["hint"]=hint
+            hint = 'Whether this expanded text is satisfactory (a, not satisfied, rewritten; b, satisfied, expand the next one).';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(hint)
             stop, sapper_query, human1 = get_value("human1", sapper_request, sapper_query)
@@ -208,9 +192,7 @@ def wenxiaojie(sapper_request):
                 savequery(sapper_query)
                 return {'Answer': sapper_query["output"]}
 
-        if sapper_query["runflag"]:
-            hint = 'Whether to continue to expand the next paragraph of text (1, continue; 2, do not continue)'
-            sapper_query["hint"]=hint
+        hint = 'Whether to continue to expand the next paragraph of text (1, continue; 2, do not continue)';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
         stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
@@ -220,9 +202,7 @@ def wenxiaojie(sapper_request):
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
 
-    if sapper_query["runflag"]:
-        hint = 'Whether to start rewriting the article for polishing (1, start rewriting; 2, do not start to rewrite)'
-        sapper_query["hint"]=hint
+    hint = 'Whether to start rewriting the article for polishing (1, start rewriting; 2, do not start to rewrite)';
     if sapper_query["runflag"]:
         sapper_query["output"].append(hint)
     stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
@@ -232,24 +212,20 @@ def wenxiaojie(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     while human == '1':
-        if sapper_query["runflag"]:
-            human1 = 'a'
-            sapper_query["human1"]=human1
-        if sapper_query["runflag"]:
-            hint = 'Enter the paragraph you want to rewrite and the rewrite requirement'
-            sapper_query["hint"]=hint
+        human1 = 'a';
+        hint = 'Enter the paragraph you want to rewrite and the rewrite requirement';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
-        stop, sapper_query, sentence = get_value("sentence", sapper_request, sapper_query)
+        stop, sapper_query, module = get_value("module", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "sentence"
+            sapper_query["input"] = "module"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        stop, sapper_query, area = get_value("area", sapper_request, sapper_query)
+        stop, sapper_query, request = get_value("request", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "area"
+            sapper_query["input"] = "request"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         while human1 == 'a':
@@ -259,13 +235,11 @@ def wenxiaojie(sapper_request):
             if sapper_query["runflag"]:
                 sapper_query["output"].append(Rewriting)
             if sapper_query["runflag"]:
-                Assessing = chain.worker("e+JwntoH_KkUE}eS^t6%",[sentence,area,Rewriting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+                Assessing = chain.worker("e+JwntoH_KkUE}eS^t6%",[module,request,Rewriting],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
                 sapper_query["Assessing"]=Assessing
             if sapper_query["runflag"]:
                 sapper_query["output"].append(Assessing)
-            if sapper_query["runflag"]:
-                hint = 'Whether this rewritten text is satisfactory (a, dissatisfied, rewritten; b, satisfied, rewrite the next one).'
-                sapper_query["hint"]=hint
+            hint = 'Whether this rewritten text is satisfactory (a, dissatisfied, rewritten; b, satisfied, rewrite the next one).';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(hint)
             stop, sapper_query, human1 = get_value("human1", sapper_request, sapper_query)
@@ -275,9 +249,7 @@ def wenxiaojie(sapper_request):
                 savequery(sapper_query)
                 return {'Answer': sapper_query["output"]}
 
-        if sapper_query["runflag"]:
-            hint = 'Whether to continue to rewrite the article for editing (1, continue; 2, end)'
-            sapper_query["hint"]=hint
+        hint = 'Whether to continue to rewrite the article for editing (1, continue; 2, end)';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
         stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
@@ -287,9 +259,7 @@ def wenxiaojie(sapper_request):
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
 
-    if sapper_query["runflag"]:
-        hint = 'Whether to start modifying sentences with the help of AI (1, yes; 2, No)'
-        sapper_query["hint"]=hint
+    hint = 'Whether to start modifying sentences with the help of Wen Xiaojie (1, yes; 2, No)';
     if sapper_query["runflag"]:
         sapper_query["output"].append(hint)
     stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
@@ -299,18 +269,14 @@ def wenxiaojie(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     while human == '1':
-        if sapper_query["runflag"]:
-            human1 = 'a'
-            sapper_query["human1"]=human1
-        if sapper_query["runflag"]:
-            hint = 'Enter an incomplete sentence to be prompted'
-            sapper_query["hint"]=hint
+        human1 = 'a';
+        hint = 'Enter an incomplete sentence to be prompted';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
-        stop, sapper_query, sentence = get_value("sentence", sapper_request, sapper_query)
+        stop, sapper_query, incomplete = get_value("incomplete", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "sentence"
+            sapper_query["input"] = "incomplete"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         while human1 == 'a':
@@ -319,9 +285,7 @@ def wenxiaojie(sapper_request):
                 sapper_query["Completing"]=Completing
             if sapper_query["runflag"]:
                 sapper_query["output"].append(Completing)
-            if sapper_query["runflag"]:
-                hint = 'Whether this supplementary text is satisfactory (a, not satisfied, rewritten; b, satisfied, make up the next one).'
-                sapper_query["hint"]=hint
+            hint = 'Whether this supplementary text is satisfactory (a, not satisfied, rewritten; b, satisfied, make up the next one).';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(hint)
             stop, sapper_query, human1 = get_value("human1", sapper_request, sapper_query)
@@ -331,9 +295,7 @@ def wenxiaojie(sapper_request):
                 savequery(sapper_query)
                 return {'Answer': sapper_query["output"]}
 
-        if sapper_query["runflag"]:
-            hint = 'Whether to continue to start modifying sentences with the help of AI (1, yes; 2, No)'
-            sapper_query["hint"]=hint
+        hint = 'Whether to continue to start modifying sentences with the help of AI (1, yes; 2, No)';
         if sapper_query["runflag"]:
             sapper_query["output"].append(hint)
         stop, sapper_query, human = get_value("human", sapper_request, sapper_query)

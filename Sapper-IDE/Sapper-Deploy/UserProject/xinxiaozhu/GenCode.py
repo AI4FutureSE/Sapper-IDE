@@ -73,76 +73,79 @@ def xinxiaozhu(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","word":"","Essentialinformation":"","OtherInformation":"","User_Profile":"","Symptoms":"","symptoms":"","Detailed_Questions":"","answer":"","Final_Judgment":"","Treatment_Plan":"","Specific_Examples":"","bot":"","user":"","human":"","history":"","chatbot":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","word":"","Essential_information":"","Other_Information":"","User_Profile":"","Living_conditions_and_Symptoms":"","Symptom":"","Detailed_Questions":"","Answer":"","Final_Judgment":"","Treatment_Plan":"","Specific_Examples":"","bot":"","User":"","human":"","history":"","chatbot":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
     word=sapper_query["word"]
-    Essentialinformation=sapper_query["Essentialinformation"]
-    OtherInformation=sapper_query["OtherInformation"]
+    Essential_information=sapper_query["Essential_information"]
+    Other_Information=sapper_query["Other_Information"]
     User_Profile=sapper_query["User_Profile"]
-    Symptoms=sapper_query["Symptoms"]
-    symptoms=sapper_query["symptoms"]
+    Living_conditions_and_Symptoms=sapper_query["Living_conditions_and_Symptoms"]
+    Symptom=sapper_query["Symptom"]
     Detailed_Questions=sapper_query["Detailed_Questions"]
-    answer=sapper_query["answer"]
+    Answer=sapper_query["Answer"]
     Final_Judgment=sapper_query["Final_Judgment"]
     Treatment_Plan=sapper_query["Treatment_Plan"]
     Specific_Examples=sapper_query["Specific_Examples"]
     bot=sapper_query["bot"]
-    user=sapper_query["user"]
+    User=sapper_query["User"]
     human=sapper_query["human"]
     history=sapper_query["history"]
     chatbot=sapper_query["chatbot"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Welcome to our AI service! We are here to help psychologists treat their patients more effectively. To get started, please provide us with basic information like your name, gender, age, occupation, family status, and social relations. We'll use this information to generate a user information file that will be used to analyze possible psychological problems. We'll also use it to create a questionnaire to help accurately diagnose any issues. All outputs will be translated into English."""
+        preInfo = """Hi, I am an AI assistant designed to help the psychologist to provide treatment for users. 
+    To get started, please provide basic information about yourself, such as your name, gender, age, occupation, family status, and social relationships. 
+    This information will be used to generate your personal profile. 
+    Thank you for your cooperation."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    word = 'Welcome to the Psychotherapist Module'
+    word = 'Welcome to the Psychotherapist Module';
     if sapper_query["runflag"]:
         sapper_query["output"].append(word)
-    Essentialinformation = 'Name, Gender, Age, Occupation'
+    Essential_information = 'Name, Gender, Age, Occupation';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(Essentialinformation)
-    OtherInformation = 'Family_Status, Social_Relationships'
+        sapper_query["output"].append(Essential_information)
+    Other_Information = 'Family status, Social relationships';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(OtherInformation)
-    stop, sapper_query, Essentialinformation = get_value("Essentialinformation", sapper_request, sapper_query)
+        sapper_query["output"].append(Other_Information)
+    stop, sapper_query, Essential_information = get_value("Essential_information", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "Essentialinformation"
+        sapper_query["input"] = "Essential_information"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     if sapper_query["runflag"]:
-        User_Profile = chain.worker("KALwdu]h-p@.L1yIhq*T",[Essentialinformation],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        User_Profile = chain.worker("KALwdu]h-p@.L1yIhq*T",[Essential_information],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
         sapper_query["User_Profile"]=User_Profile
     if sapper_query["runflag"]:
         sapper_query["output"].append(User_Profile)
-    stop, sapper_query, symptoms = get_value("symptoms", sapper_request, sapper_query)
+    stop, sapper_query, Living_conditions_and_Symptoms = get_value("Living_conditions_and_Symptoms", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "symptoms"
+        sapper_query["input"] = "Living_conditions_and_Symptoms"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     if sapper_query["runflag"]:
-        Symptoms = chain.worker("!O2^Or5qNolHE@K=Li2#",[symptoms,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
-        sapper_query["Symptoms"]=Symptoms
+        Symptom = chain.worker("!O2^Or5qNolHE@K=Li2#",[Living_conditions_and_Symptoms,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        sapper_query["Symptom"]=Symptom
     if sapper_query["runflag"]:
-        sapper_query["output"].append(Symptoms)
+        sapper_query["output"].append(Symptom)
     if sapper_query["runflag"]:
-        Detailed_Questions = chain.worker("ZLm-(CJW:oddX/X_MaXc",[Symptoms,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        Detailed_Questions = chain.worker("ZLm-(CJW:oddX/X_MaXc",[Symptom],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
         sapper_query["Detailed_Questions"]=Detailed_Questions
     if sapper_query["runflag"]:
         sapper_query["output"].append(Detailed_Questions)
-    stop, sapper_query, answer = get_value("answer", sapper_request, sapper_query)
+    stop, sapper_query, Answer = get_value("Answer", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "answer"
+        sapper_query["input"] = "Answer"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     if sapper_query["runflag"]:
-        Final_Judgment = chain.worker("b2]L^#npO(~KgSPyy:][",[Symptoms,Detailed_Questions,answer,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        Final_Judgment = chain.worker("b2]L^#npO(~KgSPyy:][",[Detailed_Questions,Answer],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
         sapper_query["Final_Judgment"]=Final_Judgment
     if sapper_query["runflag"]:
         sapper_query["output"].append(Final_Judgment)
@@ -156,28 +159,28 @@ def xinxiaozhu(sapper_request):
         sapper_query["Specific_Examples"]=Specific_Examples
     if sapper_query["runflag"]:
         sapper_query["output"].append(Specific_Examples)
-    bot = 'Are you satisfied with this suggestion'
+    bot = 'Are you satisfied with this suggestion';
     if sapper_query["runflag"]:
         sapper_query["output"].append(bot)
-    stop, sapper_query, user = get_value("user", sapper_request, sapper_query)
+    stop, sapper_query, User = get_value("User", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "user"
+        sapper_query["input"] = "User"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    while user == 'dissatisfied':
+    while User == 'Dissatisfied':
         if sapper_query["runflag"]:
-            Treatment_Plan = chain.worker("M/m*dNGkGiS:eD;H%,jq",[Final_Judgment,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+            Treatment_Plan = chain.worker("dWES9*8XlxL/DDtGdl9z",[Final_Judgment,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
             sapper_query["Treatment_Plan"]=Treatment_Plan
         if sapper_query["runflag"]:
             sapper_query["output"].append(Treatment_Plan)
         if sapper_query["runflag"]:
-            Specific_Examples = chain.worker("sX]bl1/TZ^JGs(suzf:V",[Treatment_Plan,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+            Specific_Examples = chain.worker("C}~4@B{FL//[?8Lij,%3",[Treatment_Plan,User_Profile],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
             sapper_query["Specific_Examples"]=Specific_Examples
         if sapper_query["runflag"]:
             sapper_query["output"].append(Specific_Examples)
 
-    bot = 'May I ask if you have any further questions'
+    bot = 'May I ask if you have any further questions';
     if sapper_query["runflag"]:
         sapper_query["output"].append(bot)
     while human != 'bye':
@@ -188,7 +191,7 @@ def xinxiaozhu(sapper_request):
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         if sapper_query["runflag"]:
-            chatbot = chain.worker("j)%Zkj-NoVAX~0-N;~}d",[history,Final_Judgment,human],{"engine":" gpt-3.5-turbo"})
+            chatbot = chain.worker("j)%Zkj-NoVAX~0-N;~}d",[history,human],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
             sapper_query["chatbot"]=chatbot
         if sapper_query["runflag"]:
             sapper_query["output"].append(chatbot)
