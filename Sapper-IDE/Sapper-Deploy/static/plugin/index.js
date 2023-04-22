@@ -1,5 +1,6 @@
 var key = ''
 // var weburl = 'http://127.0.0.1:5001/huixiaoshi'
+let who = 'User'    // 'User' or 'Sapper'
 function generateRandomString(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -71,7 +72,7 @@ $(document).ready(()=>{
 
     // *** conversation transmission ***
     // input message
-    let who = 'User'    // 'User' or 'Sapper'
+
     $(document).ready(function() {
         $("#conversation-key").click(function() {
             key = prompt("请输入Openai Key：", "");
@@ -114,7 +115,8 @@ $(document).ready(()=>{
             }
         // });
     });
-    $('#msgForm').submit(function (e){
+    $('#msgForm').submit(
+        function (e){
         // * display the input message in the conversation wrapper
         let currentDialog = $('.conversation-dialog').last()
         let convWrapper = $('.conversation-wrapper')
@@ -138,6 +140,20 @@ $(document).ready(()=>{
 
         // * send input message to server through ajax
         e.preventDefault()
+        convWrapper.append("<div class=\"conversation-dialog dialog-" + 'sapper' + "\" data-role=\"" + 'sapper' + "\">\n" +
+        "    <div class=\"dialog-portrait\">\n" +
+        "        <img src=\"../static/images/" + 'sapper' + ".jpg\" class=\"dialog-portrait-img\">\n" +
+        "        <p class=\"dialog-portrait-name\">" + 'sapper' + "</p>\n" +
+        "    </div>\n" +
+        "    <div class=\"dialog-msg-wrapper\">\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "        <div class=\"spinner-grow text-info\"></div>\n" +
+        "    </div>\n" +
+        "</div>")
         $.ajax({
             url: weburl,
             type: 'post',
@@ -148,6 +164,7 @@ $(document).ready(()=>{
             },
             success: function (res){
                     res = JSON.parse(res)
+                    $('.conversation-dialog').last().remove()
                     for(var i = 0;i<res.Answer.length;i++) {
                         let answer = res.Answer[i]
                         $('.conversation-wrapper').append(generateDialog('Sapper', answer))
@@ -161,14 +178,85 @@ $(document).ready(()=>{
                     }
             },
             error: function (res){
+                $('.conversation-dialog').last().remove()
                 alert('Error')
                 console.log(res)
                 msgInput.removeAttr('disabled')
             }
         })
-    })
+    }
+    )
 
     // *** Dialog rendering ***
     // middle page
 
 })
+
+function getReply(){
+    // * display the input message in the conversation wrapper
+    let currentDialog = $('.conversation-dialog').last()
+    let convWrapper = $('.conversation-wrapper')
+    let msgInput = $('#msgInput')
+    // if send from the same user, append message in current dialog
+    if (currentDialog.attr('data-role') === who){
+        currentDialog.find('.dialog-msg-wrapper').append(generateMessage(msgInput.val()))
+    }
+    // else create a new dialog
+    else{
+        convWrapper.append(generateDialog(who, msgInput.val()))
+    }
+    convWrapper.animate({
+        scrollTop: convWrapper.prop('scrollHeight')
+    }, 500)
+    // wait for response
+    let message = msgInput.val()
+    msgInput.val('')
+    // msgInput.attr('disabled','disabled')
+
+
+    // * send input message to server through ajax
+    convWrapper.append("<div class=\"conversation-dialog dialog-" + 'sapper' + "\" data-role=\"" + 'sapper' + "\">\n" +
+    "    <div class=\"dialog-portrait\">\n" +
+    "        <img src=\"../static/images/" + 'sapper' + ".jpg\" class=\"dialog-portrait-img\">\n" +
+    "        <p class=\"dialog-portrait-name\">" + 'sapper' + "</p>\n" +
+    "    </div>\n" +
+    "    <div class=\"dialog-msg-wrapper\">\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "        <div class=\"spinner-grow text-info\"></div>\n" +
+    "    </div>\n" +
+    "</div>")
+    $.ajax({
+        url: weburl,
+        type: 'post',
+        data:{
+            'id': ids,
+            'query': message,
+            'OpenaiKey': key
+        },
+        success: function (res){
+                res = JSON.parse(res)
+                $('.conversation-dialog').last().remove()
+                for(var i = 0;i<res.Answer.length;i++) {
+                    let answer = res.Answer[i]
+                    $('.conversation-wrapper').append(generateDialog('Sapper', answer))
+                    convWrapper.animate({
+                        scrollTop: convWrapper.prop('scrollHeight')
+                    }, 500)
+                    msgInput.removeAttr('disabled')
+
+                    $('#result_display').html('<h>' + res.Answer + '</h><br>')
+                    hljs.highlightAll()
+                }
+        },
+        error: function (res){
+            $('.conversation-dialog').last().remove()
+            alert('Error')
+            console.log(res)
+            msgInput.removeAttr('disabled')
+        }
+    })
+}

@@ -170,6 +170,7 @@ Font
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     border-radius: 6px;
     display: table;
+    white-space: pre-wrap;
 }
 
 /* Input bar */
