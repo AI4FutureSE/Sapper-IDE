@@ -11,6 +11,7 @@ from UserProject.maxiaoyuan.GenCode import maxiaoyuan
 from UserProject.chunxiaoxie.GenCode import chunxiaoxie
 from UserProject.xinxiaozhu.GenCode import xinxiaozhu
 from UserProject.huixiaoshi.GenCode import huixiaoshi
+from UserProject.AirSim.GenCode import AirSim
 # import gevent.pywsgi
 # import gevent.monkey
 # from flask_sslify import SSLify
@@ -19,6 +20,11 @@ app = Flask(__name__)
 CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
+
+@app.route('/AirSim',methods = ['POST','GET'])
+def web_AirSim():
+    return render_template("AirSim.html")
+
 @app.route('/xinxiaozhu',methods = ['POST','GET'])
 def web_xinxiaozhu():
     return render_template("xinxiaozhu.html")
@@ -50,6 +56,16 @@ def web_maxiaoyuan():
 @app.route('/yunxiaojuan',methods = ['POST','GET'])
 def web_yunxiaojuan():
     return render_template("yunxiaojuan.html")
+
+@app.route('/AirSimUrl',methods = ['POST','GET'])
+def Sapper_AirSim():
+    if request.method == 'POST':
+        query = request.form
+        print(query)
+        answer = AirSim(query)
+        print(json.dumps(answer))
+        # answer是json文件
+        return json.dumps(answer)
 
 @app.route('/ChatbotUrl',methods = ['POST','GET'])
 def Sapper_Chatbot():

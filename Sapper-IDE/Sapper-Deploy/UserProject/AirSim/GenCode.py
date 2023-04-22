@@ -65,11 +65,11 @@ def savequery(query):
 
 
 
-f1 = open("pychain/PromptTemplate.json", "r", encoding='UTF-8')
+f1 = open("UserProject/AirSim/PromptTemplate.json", "r", encoding='UTF-8')
 prompt_template = json.loads(f1.read())
 
 
-def sapper(sapper_request):
+def AirSim(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
@@ -101,8 +101,8 @@ def sapper(sapper_request):
         if sapper_query["runflag"]:
             history = chain.worker("UFUnq/1)d.XmdyGsK1`H",[history,human,chatbot],{"engine":"PythonREPL"})
             sapper_query["history"]=history
-    
-    
+
+
 
 
     resetquery(sapper_query, initrecord)

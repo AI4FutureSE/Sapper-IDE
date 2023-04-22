@@ -82,6 +82,10 @@ function initVariables() {
 }
 // 初始化IDE界面及其相关功能
 function initIDE() {
+    ClearExplore()
+    document.getElementById('taskNodeDisplay').value = ''
+    ClearClarify()
+    document.getElementById('Require_display').value = ''
   // 清空blocklyDiv的内容
   document.getElementById("blocklyDiv").innerHTML = "";
   // 创建Blockly工作区

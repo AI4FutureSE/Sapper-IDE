@@ -56,18 +56,23 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
             )
             image_url = response['data'][0]['url']
             return {'message': image_url, 'type': 'image'}
+        for key in model:
+            Config.add_to_config(key, model[key])
         if(model["engine"].replace(" ","")=="gpt-3.5-turbo"):
             # Note: you need to be using OpenAI Python v0.27.0 for the code below to work
             response=openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "user", "content": ready_prompt}
-                ]
+                ],
+                temperature=float(Config.temperature),
+                max_tokens=int(Config.max_tokens),
+                top_p=float(Config.top_p),
+                frequency_penalty=float(Config.frequency_penalty),
+                presence_penalty=float(Config.presence_penalty),
             )
             output = response.choices[0].message["content"]
             return {'message': output, 'type': 'text'}
-        for key in model:
-            Config.add_to_config(key, model[key])
         response = openai.Completion.create(
             engine=Config.engine.replace(" ", ""),
             prompt=Config.prompt,
