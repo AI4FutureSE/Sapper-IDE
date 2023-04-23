@@ -323,7 +323,7 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
     document.getElementById("debug" + workerid).value += workinput;
     document.getElementById("BlockConsoleOutput").style.width = "50%";
     document.getElementById("BlockConsoleDebug").style.display = "block";
-    demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debuggreen.png');
+    demoWorkspace.getBlockById(workerid).getField("debug").setValue( serviceurl + '/static/images/debuggreen.png');
     var send = {}
     if(DebugFlag){
         RerunFlag = true
@@ -349,7 +349,7 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                     send["OpenAIKey"] = OpenAIKey;
                   $.ajax({
                     async:true,
-                    url:'http://127.0.0.1:5000/SapperUnit',//'https://www.jxselab.com:5000/'
+                    url: serviceurl + 'SapperUnit',//'https://www.jxselab.com:5000/'
                     type: 'POST',
                     data: {
                         "senddata": JSON.stringify(send),
@@ -360,8 +360,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                         $('#rerun_value').removeAttr('disabled')
                         if(Object.keys(data).indexOf('error') !== -1){
                             document.getElementById("debug" + workerid).value += data['error'];
-                            demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
-                            demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugred.png');
+                            demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = serviceurl + "static/images/debugred.png";
+                            demoWorkspace.getBlockById(workerid).getField("debug").setValue( serviceurl + 'static/images/debugred.png');
                             RerunFlag = false;
                             controller.abort()
                             resolve(data.error);
@@ -406,7 +406,7 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
             send["OpenAIKey"] = OpenAIKey;
           $.ajax({
             async:true,
-            url:'http://127.0.0.1:5000/SapperUnit',//'https://www.jxselab.com:5000/'
+            url:serviceurl + 'SapperUnit',//'https://www.jxselab.com:5000/'
             type: 'POST',
             data: {
                 "senddata": JSON.stringify(send),
@@ -417,8 +417,8 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
               $('#rerun_value').removeAttr('disabled')
                 if(Object.keys(data).indexOf('error') !== -1){
                     document.getElementById("debug" + workerid).value += data['error'];
-                    demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
-                    demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugred.png');
+                    demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = serviceurl + "static/images/debugred.png";
+                    demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debugred.png');
                     controller.abort()
                     resolve(data.error);
                 }
@@ -437,7 +437,7 @@ async function run_code(worker,prompt_name, preunits, model,workerid){
                       $(this).parent().remove()
                     });
                 }
-                demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
+                demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debugblack.png');
                 document.getElementById('rerun_value').style.display = 'none';
                 document.getElementById('submit_value').style.width = '100%';
                 resolve(data.message);}
@@ -461,7 +461,7 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
     document.getElementById("debug" + workerid).value +=workinput;
     document.getElementById("BlockConsoleOutput").style.width = "50%";
     document.getElementById("BlockConsoleDebug").style.display = "block";
-    demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debuggreen.png');
+    demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debuggreen.png');
     var send = {};
     if(DebugFlag){
         RerunFlag = true;
@@ -485,7 +485,7 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                     send["model"] = model;
                   $.ajax({
                     async:true,
-                    url:'http://127.0.0.1:5000/SapperUnit',
+                    url:serviceurl + 'SapperUnit',
                     type: 'POST',
                     data: {
                         "senddata": JSON.stringify(send),
@@ -495,8 +495,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                         $('#rerun_value').removeAttr('disabled')
                         if(Object.keys(data).indexOf('error') !== -1){
                             document.getElementById("debug" + workerid).value += data["error"];
-                            demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
-                            demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugred.png');
+                            demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = serviceurl + "static/images/debugred.png";
+                            demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debugred.png');
                             RerunFlag = false
                             controller.abort()
                             resolve(data.error);
@@ -539,7 +539,7 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
             send["model"] = model;
           $.ajax({
             async:true,
-            url:'http://127.0.0.1:5000/SapperUnit',
+            url:serviceurl + 'SapperUnit',
             type: 'POST',
             data: {
                 "senddata": JSON.stringify(send),
@@ -549,8 +549,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                 $('#rerun_value').removeAttr('disabled')
                 if(Object.keys(data).indexOf('error') !== -1){
                     document.getElementById("debug" + workerid).value += data["error"];
-                    demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugred.png";
-                    demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugred.png');
+                    demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = serviceurl +"static/images/debugred.png";
+                    demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debugred.png');
                     controller.abort()
                     resolve(data.error);
                 }else {
@@ -568,8 +568,8 @@ async function run_PythonREPL(worker,prompt_name, preunits, model,workerid){
                       $(this).parent().remove()
                     });
                 }
-                demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = "http://127.0.0.1:5000/static/images/debugblack.png";
-                demoWorkspace.getBlockById(workerid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
+                demoWorkspace.getBlockById(workerid).inputList[0].fieldRow[0].value_ = serviceurl +"static/images/debugblack.png";
+                demoWorkspace.getBlockById(workerid).getField("debug").setValue(serviceurl + 'static/images/debugblack.png');
                 document.getElementById('rerun_value').style.display = 'none';
                 document.getElementById('submit_value').style.width = '100%';
                 resolve(data.message);}
@@ -631,7 +631,7 @@ async function input_value(info, blockid) {
   inputvalue.setAttribute("placeholder", "please input the value of " + info + "...");
 
   // Display a green debug icon to indicate that input is being awaited.
-  demoWorkspace.getBlockById(blockid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debuggreen.png');
+  demoWorkspace.getBlockById(blockid).getField("debug").setValue(serviceurl + 'static/images/debuggreen.png');
 
   // Wait for the user to submit their input.
   let input;
@@ -640,7 +640,7 @@ async function input_value(info, blockid) {
   }
 
   // Display a black debug icon to indicate that input has been received.
-  demoWorkspace.getBlockById(blockid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
+  demoWorkspace.getBlockById(blockid).getField("debug").setValue(serviceurl + 'static/images/debugblack.png');
 
   // Hide the input prompt and re-enable the proceed button.
   document.getElementById("submit_value").style.display = "none";
@@ -701,7 +701,7 @@ async function getInput(blockid) {
             });
             document.getElementById('submit_value').dispatchEvent(clickEvent);
             // 将块的调试图标设置为黑色
-            demoWorkspace.getBlockById(blockid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png');
+            demoWorkspace.getBlockById(blockid).getField("debug").setValue(serviceurl + 'static/images/debugblack.png');
             // 禁用输入框
             document.getElementById("debug" + blockid).readOnly = true;
             // 隐藏“提交”按钮
@@ -720,14 +720,14 @@ async function getInput(blockid) {
     return c;
 }
 function output_value(info,value,blockid){
-    demoWorkspace.getBlockById(blockid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debuggreen.png')
+    demoWorkspace.getBlockById(blockid).getField("debug").setValue(serviceurl +'static/images/debuggreen.png')
     var co_area = document.getElementById("output_value");
     co_area.value += info + ": " + value + "\n\n";
-    demoWorkspace.getBlockById(blockid).getField("debug").setValue('http://127.0.0.1:5000/static/images/debugblack.png')
+    demoWorkspace.getBlockById(blockid).getField("debug").setValue(serviceurl + 'static/images/debugblack.png')
 }
 function parallel_work(parallerId){
     for (var i= 0;i<parallerId.length;i++){
-        demoWorkspace.getBlockById(parallerId[i]).getField("debug").setValue('http://127.0.0.1:5000/static/images/debuggreen.png');
+        demoWorkspace.getBlockById(parallerId[i]).getField("debug").setValue(serviceurl + 'static/images/debuggreen.png');
     }
 }
 
@@ -740,7 +740,7 @@ function deploymentCloud(){
     Blockly.JavaScript.workspaceToCode(demoWorkspace);
     Blockly.Python.workspaceToCode(demoWorkspace);
     $.ajax({
-        url:'http://localhost:5000/DeployPreInfo',
+        url:serviceurl + 'DeployPreInfo',
         method: 'POST',
         data: {
             "prompt":JSON.stringify(PythonPromptValues),
@@ -795,7 +795,7 @@ function deploymentCloud(){
     // a.dispatchEvent(clickEvent);
     alert("url :" + "http://127.0.0.1:5001/PromptSapper")
     $.ajax({
-        url:'http://localhost:5000/Deploy',
+        url:serviceurl + 'Deploy',
         method: 'POST',
         data: {
             "prompt":JSON.stringify(PythonPromptValues),
@@ -815,7 +815,7 @@ function downloadpythoncode() {
     Blockly.JavaScript.workspaceToCode(demoWorkspace);
     Blockly.Python.workspaceToCode(demoWorkspace);
     $.ajax({
-        url:'http://localhost:5000/DeployPreInfo',
+        url:serviceurl + 'DeployPreInfo',
         method: 'POST',
         data: {
             "prompt":JSON.stringify(PythonPromptValues),
@@ -854,7 +854,7 @@ function downloadpythoncode() {
             }
         }
    var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:5000/download', true);
+        xhr.open('POST', serviceurl +'download', true);
         xhr.responseType = "blob";
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onload = function() {
@@ -1087,8 +1087,8 @@ function update_project(UploadProject){
     EngineConfigs = Object.assign(EngineConfigs, UploadProject["EngineConfigs"]);
     ClarifyConversion = UploadProject["ClarifyConversion"] ? UploadProject["ClarifyConversion"]:[];
     ExploreConversion = UploadProject["ExploreConversion"] ? UploadProject["ExploreConversion"]:[];
-    DesignManager = UploadProject['DesignManager'];
-    document.getElementById('taskNodeDisplay').value = DesignManager;
+    DesignManager = UploadProject['DesignManager'] !== "undefined" ? UploadProject['DesignManager'] : '';
+    document.getElementById('taskNodeDisplay').value = DesignManager ? DesignManager : '';
     var TaskCards =  UploadProject['TaskCards'] ? UploadProject['TaskCards']:[];
     update_explore()
     update_clarify()
@@ -1864,7 +1864,7 @@ function splitSteps(){
     document.getElementById('ReadySplit').style.display = 'block';
     document.getElementById('DecomposeButton').className = 'btn btn-msg disabled';
     $.ajax({
-        url: 'http://127.0.0.1:5000/Decompose',
+        url: serviceurl + 'Decompose',
         type: 'post',
         data:{
             'message': require,
@@ -1874,7 +1874,7 @@ function splitSteps(){
             steps = JSON.parse(steps)
            // for(i=0;i<Object.keys(steps).length;i++){
                 $.ajax({
-                    url: 'http://127.0.0.1:5000/Getprompt',
+                    url: serviceurl + 'Getprompt',
                     type: 'post',
                     data:{
                         'message': JSON.stringify(steps),
@@ -2018,7 +2018,7 @@ function SendClarify(){
         // * send input message to server through ajax
         // e.preventDefault()
         $.ajax({
-            url: 'http://127.0.0.1:5000/Clarify', //http://127.0.0.1:5000/Clarify  https://www.jxselab.com:8000/Clarify
+            url: serviceurl + 'Clarify', //  https://www.jxselab.com:8000/Clarify
             type: 'post',
             data:{
                 'function': "clarify",
@@ -2100,7 +2100,7 @@ function SendExplore(){
         msgInput.val('')
         msgInput.attr('disabled','disabled')
         $.ajax({
-            url: 'http://127.0.0.1:5000/Explore', //http://127.0.0.1:5000/Clarify  https://www.jxselab.com:8000/Clarify
+            url: serviceurl + 'Explore', //http://127.0.0.1:5000/Clarify
             type: 'post',
             data:{'senddata': JSON.stringify({
                 'function': "Explore",
@@ -2442,7 +2442,7 @@ function regetprompt(index){
             'message': document.getElementById("context-" + index).value
         }
     $.ajax({
-        url: 'http://127.0.0.1:5000/Regetprompt', //http://127.0.0.1:5000/Clarify  https://www.jxselab.com:8000/Clarify
+        url: serviceurl + 'Regetprompt', //http://127.0.0.1:5000/Clarify
         type: 'post',
         data: {"data" : JSON.stringify(data1)},
         success: function (res){

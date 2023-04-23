@@ -21,41 +21,13 @@ CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
 
-@app.route('/AirSim',methods = ['POST','GET'])
-def web_AirSim():
-    return render_template("AirSim.html")
+@app.route('/service/<service>',methods = ['POST','GET'])
+def service(service):
+    return render_template("service.html", service = f"{service}")
 
-@app.route('/xinxiaozhu',methods = ['POST','GET'])
-def web_xinxiaozhu():
-    return render_template("xinxiaozhu.html")
-
-@app.route('/chunxiaoxie',methods = ['POST','GET'])
-def web_chunxiaoxie():
-    return render_template("chunxiaoxie.html")
-
-@app.route('/huixiaoshi',methods = ['POST','GET'])
-def web_huixiaoshi():
-    return render_template("huixiaoshi.html")
-
-@app.route('/sixiaopin',methods = ['POST','GET'])
-def web_sixiaopin():
-    return render_template("sixiaopin.html")
-
-@app.route('/wenxiaojie',methods = ['POST','GET'])
-def web_wenxiaojie():
-    return render_template("wenxiaojie.html")
-
-@app.route('/qingxiaoxie',methods = ['POST','GET'])
-def web_qingxiaoxie():
-    return render_template("qingxiaoxie.html")
-
-@app.route('/maxiaoyuan',methods = ['POST','GET'])
-def web_maxiaoyuan():
-    return render_template("maxiaoyuan.html")
-
-@app.route('/yunxiaojuan',methods = ['POST','GET'])
-def web_yunxiaojuan():
-    return render_template("yunxiaojuan.html")
+@app.route('/<service>',methods = ['POST','GET'])
+def service1(service):
+    return render_template("service.html", service = f"{service}")
 
 @app.route('/AirSimUrl',methods = ['POST','GET'])
 def Sapper_AirSim():

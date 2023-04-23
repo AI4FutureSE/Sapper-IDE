@@ -73,34 +73,136 @@ def sapper(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","human":"","history":"","chatbot":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","question":"","aside":"","judge":"","judge ":"","problem_analysis":"","code_generation":"","code":"","code_analysis":"","circulate":"","requirement":"","code_modification":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
-    human=sapper_query["human"]
-    history=sapper_query["history"]
-    chatbot=sapper_query["chatbot"]
+    question=sapper_query["question"]
+    aside=sapper_query["aside"]
+    judge=sapper_query["judge"]
+    judge =sapper_query["judge "]
+    problem_analysis=sapper_query["problem_analysis"]
+    code_generation=sapper_query["code_generation"]
+    code=sapper_query["code"]
+    code_analysis=sapper_query["code_analysis"]
+    circulate=sapper_query["circulate"]
+    requirement=sapper_query["requirement"]
+    code_modification=sapper_query["code_modification"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Hi there! I'm an AI assistant that can help you use the AirSim simulator for drones. To get started, you will need to input take off."""
+        preInfo = """Hello there! Welcome to our AI service! Our service will help you analyze and solve programming problems, transform solution approach into code, comment and analyze code, and modify code to meet requirements. To get started, please enter your problem or code in the input box. We will provide the output in the form of a piece of code or text. Thank you for using our service!"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    while human != 'exit':
-        stop, sapper_query, human = get_value("human", sapper_request, sapper_query)
+    stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "question"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    aside = 'Please select mode, mode 1 problem analysis, mode 2 code analysis';
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(aside)
+    stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "judge"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    if judge  == '1':
+        if sapper_query["runflag"]:
+            problem_analysis = chain.worker("MkR()k2p[-aU,U0l~@]z",[question],{"temperature":0.7,"max_tokens":2000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["problem_analysis"]=problem_analysis
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(problem_analysis)
+        aside = 'Do you need to generate code？Input（yes/no）';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(aside)
+        stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "human"
+            sapper_query["input"] = "judge"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
+        if judge == 'yes':
+            if sapper_query["runflag"]:
+                code_generation = chain.worker("0@D@K1mugkQy5NKv!i%N",[question,problem_analysis],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                sapper_query["code_generation"]=code_generation
+            code = code_generation;
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(code)
+        
+    else:
+        code = question;
+    
+    if judge != 'no':
+        aside = '  Do you need code analysis？Input（yes/no）';
         if sapper_query["runflag"]:
-            chatbot = chain.worker("{0kH/PQQW;J^6,(HkAH^",[history,human],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
-            sapper_query["chatbot"]=chatbot
+            sapper_query["output"].append(aside)
+        stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "judge"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
+        if judge == 'yes':
+            if sapper_query["runflag"]:
+                code_analysis = chain.worker("-.F(79I]cXI,#X][Bsu|",[code],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                sapper_query["code_analysis"]=code_analysis
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(code_analysis)
+        
+        aside = 'If you\'re asking whether a code needs to be modified or not, please enter "Needs modification" if it does, or "No modification required" if it doesn\'t.';
         if sapper_query["runflag"]:
-            sapper_query["output"].append(chatbot)
-        if sapper_query["runflag"]:
-            history = chain.worker("UFUnq/1)d.XmdyGsK1`H",[history,human,chatbot],{"engine":"PythonREPL"})
-            sapper_query["history"]=history
+            sapper_query["output"].append(aside)
+        stop, sapper_query, circulate = get_value("circulate", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "circulate"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
+        while circulate == 'Needs modification':
+            aside = 'Please enter the requirement';
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(aside)
+            stop, sapper_query, requirement = get_value("requirement", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "requirement"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+            if sapper_query["runflag"]:
+                code_modification = chain.worker("CHStU|;dN?IkxcxeCFV;",[code,requirement],{"temperature":0.2,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                sapper_query["code_modification"]=code_modification
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(code_modification)
+            aside = '  Do you need code analysis？Input（yes/no）';
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(aside)
+            stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "judge"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+            if judge == 'yes':
+                if sapper_query["runflag"]:
+                    code_analysis = chain.worker("BFfzZym6E4!JOvT]JbNh",[code_modification],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                    sapper_query["code_analysis"]=code_analysis
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(code_analysis)
+            
+            aside = 'If you\'re asking whether a code needs to be modified or not, please enter "Needs modification" if it does, or "No modification required" if it doesn\'t.';
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(aside)
+            stop, sapper_query, circulate = get_value("circulate", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "circulate"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+            code = code_modification;
+        
     
     
 

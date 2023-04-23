@@ -28,6 +28,4 @@ class Config():
             self.stop_strs = value
         elif param == "prompt":
             self.prompt = value
-        else:
-            raise Exception("Invalid parameter name")
 

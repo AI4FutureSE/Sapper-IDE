@@ -169,7 +169,6 @@ Blockly.Python['Input'] = function(block) {
     for(var j = 0; j < preunits.length; j++){
         code += "stop, sapper_query, "+preunits[j]+" = get_value(\""+preunits[j]+"\", sapper_request, sapper_query)\n"
         code += "if stop and sapper_query[\"runflag\"]:\n\tsapper_query[\"runflag\"] = False\n\tsapper_query[\"input\"] = \""+preunits[j]+"\"\n\tsavequery(sapper_query)\n\treturn {'Answer': sapper_query[\"output\"]}\n"
-
     }
   return "#*#*" + JSON.stringify({"Unit": preunits, "Code": code});
 };

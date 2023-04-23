@@ -24,6 +24,11 @@ CORS(app)
 # sslify = SSLify(app)
 # CORS(app, supports_credentials=True)
 
+# 创建一个动态路由
+@app.route('/project/<project>')
+def project(project):
+    return render_template('project.html', project = f"{project}")
+
 @app.route('/get_project_data',methods = ['POST','GET'])
 def get_json_data():
     data = request.form
@@ -31,38 +36,6 @@ def get_json_data():
     with open('static/project/' + data['project'] + '.json', 'r',encoding='UTF-8') as file:
         jsondata = json.load(file)
     return json.dumps(jsondata)
-
-@app.route('/project/ChunXiaoXie')
-def project_chunxiaoxie():
-    return render_template("project/chunxiaoxie.html")
-
-@app.route('/project/MaXiaoYuan')
-def project_maxiaoyuan():
-    return render_template("project/maxiaoyuan.html")
-
-@app.route('/project/HuiXiaoShi')
-def project_hunxiaoshi():
-    return render_template("project/huixiaoshi.html")
-
-@app.route('/project/QingXiaoXie')
-def project_qingxiaoxie():
-    return render_template("project/qingxiaoxie.html")
-
-@app.route('/project/SiXiaoPin')
-def project_sixiaopin():
-    return render_template("project/sixiaopin.html")
-
-@app.route('/project/YunXiaoJuan')
-def project_yunxiaojuan():
-    return render_template("project/yunxiaojuan.html")
-
-@app.route('/project/XinXiaoZhu')
-def project_xinxiaozhu():
-    return render_template("project/xinxiaozhu.html")
-
-@app.route('/project/WenXiaoJie')
-def project_wenxiaojie():
-    return render_template("project/wenxiaojie.html")
 
 @app.route('/sapperIDE')
 def index():

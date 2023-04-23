@@ -98,9 +98,9 @@ $(document).ready(()=>{
                             for(var i = 0;i<res.Answer.length;i++) {
                                 let answer = res.Answer[i]
                                 $('.conversation-wrapper').append(generateDialog('Sapper', answer))
-                                convWrapper.animate({
-                                    scrollTop: convWrapper.prop('scrollHeight')
-                                }, 500)
+                                // convWrapper.animate({
+                                //     scrollTop: convWrapper.prop('scrollHeight')
+                                // }, 500)
                                 // msgInput.removeAttr('disabled')
                                 $('#result_display').html('<h>' + res.Answer + '</h><br>')
                                 hljs.highlightAll()
