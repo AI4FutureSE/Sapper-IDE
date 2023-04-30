@@ -99,12 +99,13 @@ def wenxiaojie(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Welcome to our AI service! With our service, you can generate a general outline or a personalized article based on the theme, reader, genre, general outline, idea, material, mold_piece and stu_name you provide. To get started, simply enter your desired parameters into the given fields and click "Generate". We'll take care of the rest!"""
+        preInfo = """Welcome to our personalized long article supported by artificial intelligence, Wen Xiao jie"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    hint = 'Now to generate the outline of the article you want, enter the theme of the article, the reader and the article genre, the general idea of the article, and what materials the article should include';
+    hint = 'You need to input relevant information about the “topic”, “audience”, and “genre” of the article in order to help you generate a general outline.' \
+           'Then, you need to input the “article ideas” and relevant information about the “materials” to be used in order to help you generate a personalized outline.';
     if sapper_query["runflag"]:
         sapper_query["output"].append(hint)
     stop, sapper_query, theme = get_value("theme", sapper_request, sapper_query)

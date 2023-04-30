@@ -38,6 +38,22 @@ Requirement guidance: You need to specify some conditions. For example, paint au
 Answer: Abstract pictures when the weather is rainy and nature landscapes when the weather is sunny.
 Please give requirement guidance for the following functional requirement based on the above form.
 """
+
+question_prompt2 = """
+Context: A user is interacting with a large language model. They are crafting prompts and giving them to the LLM in order to get the model to complete a task or generate output.
+You are a product manager AI tasked with focusing on users' requirements and understanding them through deep communication.
+You need to provide a question about the users' requirements and let users reply.
+The question raised can be referred to the user's task notes：
+{{User_Behaviour}}
+The question should be well in line with user requirements and usage scenarios.
+
+Functional requirement: I want to develop a service that automatically draws according to the weather.
+Requirement guidance: You need to consider what goes into the design. For example, which colors to use for painting, canvas size, canvas type, etc.
+Answer: Draw 500x500 pixel RGB color pictures.
+Requirement guidance: You need to specify some conditions. For example, paint automatically only on rainy or sunny days.
+Answer: Abstract pictures when the weather is rainy and nature landscapes when the weather is sunny.
+Please give requirement guidance for the following functional requirement based on the above form.
+"""
 def generate_query_expansion(Behaviour, query, OpenAIKey):
     openai.api_key = OpenAIKey
     # TODO figure out alternative stopping criterion for generating initial characters?

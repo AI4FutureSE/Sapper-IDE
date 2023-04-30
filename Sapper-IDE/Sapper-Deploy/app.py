@@ -102,7 +102,8 @@ def Sapper_sixiaopin():
 @app.route('/maxiaoyuanUrl',methods = ['POST','GET'])
 def Sapper_maxiaoyuan():
     if request.method == 'POST':
-        query = request.form
+        print(request)
+        query = request.json
         print(query)
         answer = maxiaoyuan(query)
         print(json.dumps(answer))

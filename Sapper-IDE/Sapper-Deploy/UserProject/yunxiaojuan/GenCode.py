@@ -114,7 +114,14 @@ def yunxiaojuan(sapper_request):
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Hi there! Welcome to our AI Service. With this service, you can easily generate corresponding flowcharts based on user requirements. All you need to do is enter the user requirements in the given field and the flowchart will be automatically generated for you. We also have an analysis feature where you can analyze an erroneous answer given to a question and provide an explanation for the mistake, as well as provide advice for further learning. Let's get started!"""
+        preInfo = """
+        Hello! Welcome to our Al Service. 
+        With this service, you can generate corresponding questions based on user needs by selecting the required functionality and following the prompts to enter user requirements. We also provide two additional functions: 
+        learning analysis and material search. 
+        These features help you analyze your personal learning situation and generate appropriate questions based on your needs, or find materials that meet your expectations for creating questions and generate them accordingly. 
+        We aim to provide you with suitable exercises. 
+        So, let's get started!
+        """
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)

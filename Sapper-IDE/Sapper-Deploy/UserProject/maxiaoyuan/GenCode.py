@@ -73,23 +73,26 @@ def maxiaoyuan(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","question":"","aside":"","judge":"","judge ":"","problem_analysis":"","code_generation":"","code":"","code_analysis":"","circulate":"","requirement":"","code_modification":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","question":"","aside":"","judge":"","judge ":"","problem_analysis":"","judge2":"","code_generation":"","code":"","judge3":"","code_analysis":"","circulate":"","requirement":"","code_modification":"","judge4":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
     question=sapper_query["question"]
     aside=sapper_query["aside"]
     judge=sapper_query["judge"]
     judge =sapper_query["judge "]
     problem_analysis=sapper_query["problem_analysis"]
+    judge2=sapper_query["judge2"]
     code_generation=sapper_query["code_generation"]
     code=sapper_query["code"]
+    judge3=sapper_query["judge3"]
     code_analysis=sapper_query["code_analysis"]
     circulate=sapper_query["circulate"]
     requirement=sapper_query["requirement"]
     code_modification=sapper_query["code_modification"]
+    judge4=sapper_query["judge4"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Hello there! Welcome to our AI service! Our service will help you analyze and solve programming problems, transform solution approach into code, comment and analyze code, and modify code to meet requirements. To get started, please enter your problem or code in the input box. We will provide the output in the form of a piece of code or text. Thank you for using our service!"""
+        preInfo = """Hello, welcome to Code Little Ape. You can send me a programming-related question or a piece of code, and I will assist you in solving your problem and provide an analysis of the code.If have any suggestion，please send mail to 1402581803@qq.com."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
@@ -100,7 +103,7 @@ def maxiaoyuan(sapper_request):
         sapper_query["input"] = "question"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    aside = 'Please select mode, mode 1 problem analysis, mode 2 code analysis';
+    aside = 'Please select mode, mode 1 problem analysis, mode 2 code analysis.Input(1/2)';
     if sapper_query["runflag"]:
         sapper_query["output"].append(aside)
     stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
@@ -118,13 +121,13 @@ def maxiaoyuan(sapper_request):
         aside = 'Do you need to generate code？Input（yes/no）';
         if sapper_query["runflag"]:
             sapper_query["output"].append(aside)
-        stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+        stop, sapper_query, judge2 = get_value("judge2", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "judge"
+            sapper_query["input"] = "judge2"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        if judge == 'yes':
+        if judge2 == 'yes':
             if sapper_query["runflag"]:
                 code_generation = chain.worker("0@D@K1mugkQy5NKv!i%N",[question,problem_analysis],{"temperature":0.7,"max_tokens":4000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["code_generation"]=code_generation
@@ -135,17 +138,17 @@ def maxiaoyuan(sapper_request):
     else:
         code = question;
 
-    if judge != 'no':
+    if judge2 != 'no':
         aside = '  Do you need code analysis？Input（yes/no）';
         if sapper_query["runflag"]:
             sapper_query["output"].append(aside)
-        stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+        stop, sapper_query, judge3 = get_value("judge3", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "judge"
+            sapper_query["input"] = "judge3"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        if judge == 'yes':
+        if judge3 == 'yes':
             if sapper_query["runflag"]:
                 code_analysis = chain.worker("-.F(79I]cXI,#X][Bsu|",[code],{"temperature":0.7,"max_tokens":3000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                 sapper_query["code_analysis"]=code_analysis
@@ -179,13 +182,13 @@ def maxiaoyuan(sapper_request):
             aside = '  Do you need code analysis？Input（yes/no）';
             if sapper_query["runflag"]:
                 sapper_query["output"].append(aside)
-            stop, sapper_query, judge = get_value("judge", sapper_request, sapper_query)
+            stop, sapper_query, judge4 = get_value("judge4", sapper_request, sapper_query)
             if stop and sapper_query["runflag"]:
                 sapper_query["runflag"] = False
-                sapper_query["input"] = "judge"
+                sapper_query["input"] = "judge4"
                 savequery(sapper_query)
                 return {'Answer': sapper_query["output"]}
-            if judge == 'yes':
+            if judge4 == 'yes':
                 if sapper_query["runflag"]:
                     code_analysis = chain.worker("BFfzZym6E4!JOvT]JbNh",[code_modification],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                     sapper_query["code_analysis"]=code_analysis

@@ -108,7 +108,10 @@ def chunxiaoxie(sapper_request):
     sapper_query["output"] = []
     if sapper_query["runflag"]:
         preInfo = """Hi there! 
-    I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect {{text type}}. To get started, please provide me with the topic, content and word count of the text you wish to write. I'll then provide you with the best writing advice, materials and resources to help you create it."""
+I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
+To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
+I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article.
+"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)

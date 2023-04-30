@@ -90,7 +90,7 @@ def huixiaoshi(sapper_request):
     sapper_query["output"] = []
     if sapper_query["runflag"]:
         preInfo = """Welcome to our AI service! 
-    This AI service will help you create a painting based on a brief description or poem. To get started, please provide the poem or description that you would like to use as the basis for your painting. Then, you will be prompted to describe the picture that comes to your mind. After that, the AI will generate a painting according to your input. Get ready to create your masterpiece!"""
+            This AI service will help you create a painting based on a brief description or poem. To get started, please provide the poem or description that you would like to use as the basis for your painting. Then, you will be prompted to describe the picture that comes to your mind. After that, the AI will generate a painting according to your input. Get ready to create your masterpiece!"""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
@@ -102,25 +102,25 @@ def huixiaoshi(sapper_request):
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     if sapper_query["runflag"]:
-        describe = chain.worker("oD%!BM;b.iz8@A:]DCV@",[human],{"temperature":0.5,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        describe = chain.worker("oD%!BM;b.iz8@A:]DCV@",[human],{"temperature":0.1,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["describe"]=describe
     if sapper_query["runflag"]:
-        describe1 = chain.worker("UBRFkzd,DG5JOsBr_8P1",[human],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        describe1 = chain.worker("UBRFkzd,DG5JOsBr_8P1",[human],{"temperature":0.1,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["describe1"]=describe1
     if sapper_query["runflag"]:
-        describe2 = chain.worker("Q5(9bwQOhQE-n}2z,hex",[human],{"temperature":1,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        describe2 = chain.worker("Q5(9bwQOhQE-n}2z,hex",[human],{"temperature":0.1,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["describe2"]=describe2
     if sapper_query["runflag"]:
-        select1 = chain.worker("jl=[lJJ*L:aNNu3Bo],N",[describe,describe1,describe2],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        select1 = chain.worker("jl=[lJJ*L:aNNu3Bo],N",[describe,describe1,describe2],{"temperature":0.1,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["select1"]=select1
     if sapper_query["runflag"]:
-        object = chain.worker("KBSb9C2nX]sZF(s4CP^7",[select1],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        object = chain.worker("KBSb9C2nX]sZF(s4CP^7",[select1],{"temperature":0.7,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["object"]=object
     if sapper_query["runflag"]:
         select2 = chain.worker("lZ*S^Fr~yqgx}AQ^w(+/",[object],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
         sapper_query["select2"]=select2
     if sapper_query["runflag"]:
-        paintstyle = chain.worker("BQ+I3V3W!ub0avH4M{gE",[human],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+        paintstyle = chain.worker("BQ+I3V3W!ub0avH4M{gE",[human],{"temperature":0.1,"max_tokens":600,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"t","engine":" text-davinci-003"})
         sapper_query["paintstyle"]=paintstyle
     if sapper_query["runflag"]:
         style1 = chain.worker("gtrhg_aH~mx.ZpJw;^%D",[paintstyle],{"temperature":0.7,"max_tokens":225,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
