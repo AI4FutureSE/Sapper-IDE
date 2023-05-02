@@ -73,65 +73,64 @@ def chunxiaoxie(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","Text_type":"","bot_one":"","Reply1":"","question":"","history":"","Reply2":"","new_requirement":"","advices":"","Reply3":"","wented_knowledge":"","知识":"","reply":"","Reply4":"","went_rewrite":"","rewrite_better":"","Reply5":"","went_add":"","Reply6":"","choose":"","Outline":"","Reply7":"","enrich_part":"","rich_outline":"","短文本":"","Reply8":"","poilsh_part":"","reply9":"","polish_dirction":"","Polish":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","AI_talk":"","Text_type":"","Reply1":"","question":"","AIReply":"","history":"","bot_one":"","abbreviation":"","Reply8":"","Audience":"","Theme":"","Style":"","Identity":"","Information":"","Reply2":"","wented_knowledge":"","find_knowledge":"","Simplify_knowledge":"","Reply3":"","materials":"","AI_reply1":"","choose_user":"","AI_writing":"","AI_reply2":"","poilsh_part":"","AI_reply3":"","polish_dirction":"","polish":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
+    AI_talk=sapper_query["AI_talk"]
     Text_type=sapper_query["Text_type"]
-    bot_one=sapper_query["bot_one"]
     Reply1=sapper_query["Reply1"]
     question=sapper_query["question"]
+    AIReply=sapper_query["AIReply"]
     history=sapper_query["history"]
-    Reply2=sapper_query["Reply2"]
-    new_requirement=sapper_query["new_requirement"]
-    advices=sapper_query["advices"]
-    Reply3=sapper_query["Reply3"]
-    wented_knowledge=sapper_query["wented_knowledge"]
-    知识=sapper_query["知识"]
-    reply=sapper_query["reply"]
-    Reply4=sapper_query["Reply4"]
-    went_rewrite=sapper_query["went_rewrite"]
-    rewrite_better=sapper_query["rewrite_better"]
-    Reply5=sapper_query["Reply5"]
-    went_add=sapper_query["went_add"]
-    Reply6=sapper_query["Reply6"]
-    choose=sapper_query["choose"]
-    Outline=sapper_query["Outline"]
-    Reply7=sapper_query["Reply7"]
-    enrich_part=sapper_query["enrich_part"]
-    rich_outline=sapper_query["rich_outline"]
-    短文本=sapper_query["短文本"]
+    bot_one=sapper_query["bot_one"]
+    abbreviation=sapper_query["abbreviation"]
     Reply8=sapper_query["Reply8"]
+    Audience=sapper_query["Audience"]
+    Theme=sapper_query["Theme"]
+    Style=sapper_query["Style"]
+    Identity=sapper_query["Identity"]
+    Information=sapper_query["Information"]
+    Reply2=sapper_query["Reply2"]
+    wented_knowledge=sapper_query["wented_knowledge"]
+    find_knowledge=sapper_query["find_knowledge"]
+    Simplify_knowledge=sapper_query["Simplify_knowledge"]
+    Reply3=sapper_query["Reply3"]
+    materials=sapper_query["materials"]
+    AI_reply1=sapper_query["AI_reply1"]
+    choose_user=sapper_query["choose_user"]
+    AI_writing=sapper_query["AI_writing"]
+    AI_reply2=sapper_query["AI_reply2"]
     poilsh_part=sapper_query["poilsh_part"]
-    reply9=sapper_query["reply9"]
+    AI_reply3=sapper_query["AI_reply3"]
     polish_dirction=sapper_query["polish_dirction"]
-    Polish=sapper_query["Polish"]
+    polish=sapper_query["polish"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
         preInfo = """Hi there! 
-I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
-To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
-I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article.
-"""
+    I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
+    To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
+    I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
+    AI_talk = 'Please provide me with the type of text you would like me to write.'
+    if sapper_query["runflag"]:
+        sapper_query["output"].append(AI_talk)
     stop, sapper_query, Text_type = get_value("Text_type", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
         sapper_query["input"] = "Text_type"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    if sapper_query["runflag"]:
-        bot_one = chain.worker("B38yKG19;.Cn9NM^lZ7V",[Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        sapper_query["bot_one"]=bot_one
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(bot_one)
-    Reply1 = "Next, you can have a conversation with a writing robot that will answer your questions and brainstorm with you.The conversation will end when you input 'bey'.";
+    Reply1 = "Next, you can have a conversation with a writing robot that will answer your questions and brainstorm with you.The conversation will end when you input 'bey'.Please ask questions from the perspectives of the target audience, the main topic of the article, the style of the article, the materials needed for the article, and the identity of the article's author during the inquiry process.";
     if sapper_query["runflag"]:
         sapper_query["output"].append(Reply1)
     question = 'yes';
     while question != 'bey':
+        AIReply = 'Please enter the question you want to ask.';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(AIReply)
         stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
@@ -139,31 +138,58 @@ I'll then provide you with the best writing advice, materials and resources to h
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
         if sapper_query["runflag"]:
-            bot_one = chain.worker("R`cj=cibYgd*2$E$8AAH",[Text_type,history,question],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            bot_one = chain.worker("R`cj=cibYgd*2$E$8AAH",[Text_type,history,question],{"model":"t","engine":" text-davinci-003"})
             sapper_query["bot_one"]=bot_one
         if sapper_query["runflag"]:
             sapper_query["output"].append(bot_one)
         if sapper_query["runflag"]:
-            history = chain.worker("n?{lFAQ%+rp)72JSi[OU",[history,question,bot_one],{"engine":"PythonREPL"})
+            abbreviation = chain.worker("|Mi`-w1#PGiP(A$mH4hm",[bot_one],{"model":"t","engine":" text-davinci-003"})
+            sapper_query["abbreviation"]=abbreviation
+        if sapper_query["runflag"]:
+            history = chain.worker("n?{lFAQ%+rp)72JSi[OU",[history,question,abbreviation],{"engine":"PythonREPL"})
             sapper_query["history"]=history
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(AIReply)
+        stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "question"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
 
-    Reply2 = 'You can input more specific requirements for the article you want to write after communicating with the robot, such as the topic, style, or other more detailed requirements.';
+    Reply8 = 'Target audience of the article, article topic, writing style, and author identity, please provide them in order for me.';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply2)
-    stop, sapper_query, new_requirement = get_value("new_requirement", sapper_request, sapper_query)
+        sapper_query["output"].append(Reply8)
+    stop, sapper_query, Audience = get_value("Audience", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "new_requirement"
+        sapper_query["input"] = "Audience"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    stop, sapper_query, Theme = get_value("Theme", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "Theme"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    stop, sapper_query, Style = get_value("Style", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "Style"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    stop, sapper_query, Identity = get_value("Identity", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "Identity"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
     if sapper_query["runflag"]:
-        advices = chain.worker("Q9O@~?MjGQth8hhS77oC",[Text_type,new_requirement],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-        sapper_query["advices"]=advices
+        Information = chain.worker("i/gw0DU96nRf(2-~Ge9*",[Audience,Theme,Style,Identity],{"engine":"PythonREPL"})
+        sapper_query["Information"]=Information
+    Reply2 = 'Please enter the materials and examples you want to search for in the article, and AI will help find some of them. If "over" is output, it means to stop searching.';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(advices)
-    Reply3 = "Find the materials and knowledge you want for the article based on your ideas. Input 'over' to stop.nowledge you want for the article.";
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply3)
+        sapper_query["output"].append(Reply2)
     stop, sapper_query, wented_knowledge = get_value("wented_knowledge", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
@@ -172,12 +198,15 @@ I'll then provide you with the best writing advice, materials and resources to h
         return {'Answer': sapper_query["output"]}
     while wented_knowledge != 'over':
         if sapper_query["runflag"]:
-            知识 = chain.worker("B0WCVj@zMsESFX8hdx_u",[wented_knowledge],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["知识"]=知识
+            find_knowledge = chain.worker("-uCv8V,22c;Gj^rTs;^q",[wented_knowledge],{"model":"t","engine":" text-davinci-003"})
+            sapper_query["find_knowledge"]=find_knowledge
         if sapper_query["runflag"]:
-            sapper_query["output"].append(知识)
+            Simplify_knowledge = chain.worker("W*{TJk*fU7/nlfeZ1hqs",[find_knowledge],{"model":"t","engine":" text-davinci-003"})
+            sapper_query["Simplify_knowledge"]=Simplify_knowledge
         if sapper_query["runflag"]:
-            sapper_query["output"].append(Reply3)
+            sapper_query["output"].append(Simplify_knowledge)
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(Reply2)
         stop, sapper_query, wented_knowledge = get_value("wented_knowledge", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
@@ -185,120 +214,63 @@ I'll then provide you with the best writing advice, materials and resources to h
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
 
-    reply = 'Please identify the parts you want to use and divide them into two parts based on whether or not they need to be abbreviated.';
+    Reply3 = 'Please select and input the relevant parts from the materials you have searched for that can be used in your article.';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(reply)
-    Reply4 = "Please input any extraneous knowledge you have. Input 'over' to stop..";
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply4)
-    stop, sapper_query, went_rewrite = get_value("went_rewrite", sapper_request, sapper_query)
+        sapper_query["output"].append(Reply3)
+    stop, sapper_query, materials = get_value("materials", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "went_rewrite"
+        sapper_query["input"] = "materials"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    while went_rewrite != 'over':
-        if sapper_query["runflag"]:
-            rewrite_better = chain.worker("11@vQnzYWEwP^d?2s=Mu",[went_rewrite],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["rewrite_better"]=rewrite_better
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(rewrite_better)
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(Reply4)
-        stop, sapper_query, went_rewrite = get_value("went_rewrite", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "went_rewrite"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-
-    Reply5 = 'Please input any knowledge that any additional content you want to add to the prompt.';
+    AI_reply1 = 'Input "start," AI begins writing.';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply5)
-    stop, sapper_query, went_add = get_value("went_add", sapper_request, sapper_query)
+        sapper_query["output"].append(AI_reply1)
+    stop, sapper_query, choose_user = get_value("choose_user", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "went_add"
+        sapper_query["input"] = "choose_user"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    Reply6 = 'Input "1" to generate long-form text (outline first, then generate content paragraph by paragraph according to the outline), input "2" to generate short-form text.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply6)
-    stop, sapper_query, choose = get_value("choose", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "choose"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    if choose == '1':
+    if choose_user == 'start':
         if sapper_query["runflag"]:
-            Outline = chain.worker("R;GpCSDc8pqReTVoq*r8",[went_add,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["Outline"]=Outline
+            AI_writing = chain.worker("5qi.shLZ]tEXqDZeTm-U",[Identity,Text_type,Information,materials],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+            sapper_query["AI_writing"]=AI_writing
         if sapper_query["runflag"]:
-            sapper_query["output"].append(Outline)
-        Reply7 = "Input the content of the outline, input 'over' to stop.";
+            sapper_query["output"].append(AI_writing)
+        AI_reply2 = "Please input the content you want to polish, input 'over' to stop.";
         if sapper_query["runflag"]:
-            sapper_query["output"].append(Reply7)
-        stop, sapper_query, enrich_part = get_value("enrich_part", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "enrich_part"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-        while enrich_part != 'over':
-            if sapper_query["runflag"]:
-                rich_outline = chain.worker("t$.S($c0Wp66;YnG~~o8",[enrich_part],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-                sapper_query["rich_outline"]=rich_outline
-            if sapper_query["runflag"]:
-                sapper_query["output"].append(rich_outline)
-            if sapper_query["runflag"]:
-                sapper_query["output"].append(Reply7)
-            stop, sapper_query, enrich_part = get_value("enrich_part", sapper_request, sapper_query)
-            if stop and sapper_query["runflag"]:
-                sapper_query["runflag"] = False
-                sapper_query["input"] = "enrich_part"
-                savequery(sapper_query)
-                return {'Answer': sapper_query["output"]}
-
-    elif choose == '2':
-        if sapper_query["runflag"]:
-            短文本 = chain.worker("+R5T2GO$%C^Md}%aum_1",[went_add,new_requirement,Text_type],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["短文本"]=短文本
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(短文本)
-
-    Reply8 = "Please input the content you want to polish, input 'over' to stop.";
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply8)
-    stop, sapper_query, poilsh_part = get_value("poilsh_part", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "poilsh_part"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    while poilsh_part != 'over':
-        reply9 = 'Please input the direction you want to polish.';
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(reply9)
-        stop, sapper_query, polish_dirction = get_value("polish_dirction", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "polish_dirction"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-        if sapper_query["runflag"]:
-            Polish = chain.worker("Q+O;pFY8yOVquwNpYy8h",[poilsh_part,reply9,reply9,polish_dirction],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["Polish"]=Polish
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(Polish)
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(Reply8)
+            sapper_query["output"].append(AI_reply2)
         stop, sapper_query, poilsh_part = get_value("poilsh_part", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
             sapper_query["input"] = "poilsh_part"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
+        while poilsh_part != 'over':
+            AI_reply3 = 'Please input the direction you want to polish.';
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(AI_reply3)
+            stop, sapper_query, polish_dirction = get_value("polish_dirction", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "polish_dirction"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+            if sapper_query["runflag"]:
+                polish = chain.worker("?l#]YX`_(k:@Sh:?%Z:o",[poilsh_part,polish_dirction],{"model":"t","engine":" text-davinci-003"})
+                sapper_query["polish"]=polish
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(polish)
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(AI_reply2)
+            stop, sapper_query, poilsh_part = get_value("poilsh_part", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "poilsh_part"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+
 
 
 
