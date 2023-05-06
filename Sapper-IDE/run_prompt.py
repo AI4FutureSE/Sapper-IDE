@@ -41,7 +41,6 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
             e = "The number of preworkers is different from the number of parameters in the prompt."
             return {"error": e, 'type': 'text'}
     Config = LLMConfigurator.Config()
-    # openai.api_key = "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"
     openai.api_key = OpenAIKey
     if debugvalue != "":
         ready_prompt = debugvalue
@@ -95,15 +94,6 @@ def run_Function(promptvalue, prenunits ,model,OpenAIKey,debugvalue):
     except Exception as e:
         return {"error": str(e), 'type': 'text'}
 
-def run_SerpAPIWrapper(promptvalue, prenunits ,model, debugvalue):
-    ready_prompt = promptvalue
-    para_name = getPromptParams(promptvalue)
-    for index, key in enumerate(para_name):
-        ready_prompt = ready_prompt.replace("{{%s}}" % key, prenunits[index])
-    os.environ["SERPAPI_API_KEY"] = "39a55d7595bb30d419f79bf67cc13f507c191e633ad367eb42d6776f6db11d51"
-    from langchain.utilities import SerpAPIWrapper
-    search = SerpAPIWrapper()
-    return {'message': search.run(ready_prompt)}
 
 def run_PythonREPL(promptvalue, prenunits ,model,debugvalue):
     ready_prompt = promptvalue

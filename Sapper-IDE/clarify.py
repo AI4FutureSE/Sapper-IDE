@@ -1,7 +1,5 @@
 import openai
 
-# openai.api_key = "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"
-
 def program_Generate(prompt, num_candidates=1, max_tokens=256, stop=None, temperature=0):
     results = []
     try:

@@ -73,203 +73,200 @@ def sapper(sapper_request):
     chain = sapperchain(sapper_request['OpenaiKey'])
     chain.promptbase(prompt_template)
 
-    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","AI_talk":"","Text_type":"","Reply1":"","question":"","AIReply":"","history":"","bot_one":"","abbreviation":"","Reply8":"","Audience":"","Theme":"","Style":"","Identity":"","Information":"","Reply2":"","wented_knowledge":"","find_knowledge":"","Simplify_knowledge":"","Reply3":"","materials":"","AI_reply1":"","choose_user":"","AI_writing":"","AI_reply2":"","poilsh_part":"","AI_reply3":"","polish_dirction":"","polish":"","preInfo":""}
+    initrecord = {"id":"","input":"preInfo","output":[],"runflag":"","Empty":"","start":"","option":"","chatbot":"","Scene":"","Answer":"","history_1":"","Question":"","Standard_Answer":"","Evaluation":"","Score":"","sentence":"","Career":"","User_2":"","history_2":"","Helper":"","Judge":"","Advice":"","First_Improvement":"","preInfo":""}
     sapper_query = update_request(initrecord, sapper_request)
-    AI_talk=sapper_query["AI_talk"]
-    Text_type=sapper_query["Text_type"]
-    Reply1=sapper_query["Reply1"]
-    question=sapper_query["question"]
-    AIReply=sapper_query["AIReply"]
-    history=sapper_query["history"]
-    bot_one=sapper_query["bot_one"]
-    abbreviation=sapper_query["abbreviation"]
-    Reply8=sapper_query["Reply8"]
-    Audience=sapper_query["Audience"]
-    Theme=sapper_query["Theme"]
-    Style=sapper_query["Style"]
-    Identity=sapper_query["Identity"]
-    Information=sapper_query["Information"]
-    Reply2=sapper_query["Reply2"]
-    wented_knowledge=sapper_query["wented_knowledge"]
-    find_knowledge=sapper_query["find_knowledge"]
-    Simplify_knowledge=sapper_query["Simplify_knowledge"]
-    Reply3=sapper_query["Reply3"]
-    materials=sapper_query["materials"]
-    AI_reply1=sapper_query["AI_reply1"]
-    choose_user=sapper_query["choose_user"]
-    AI_writing=sapper_query["AI_writing"]
-    AI_reply2=sapper_query["AI_reply2"]
-    poilsh_part=sapper_query["poilsh_part"]
-    AI_reply3=sapper_query["AI_reply3"]
-    polish_dirction=sapper_query["polish_dirction"]
-    polish=sapper_query["polish"]
+    Empty=sapper_query["Empty"]
+    start=sapper_query["start"]
+    option=sapper_query["option"]
+    chatbot=sapper_query["chatbot"]
+    Scene=sapper_query["Scene"]
+    Answer=sapper_query["Answer"]
+    history_1=sapper_query["history_1"]
+    Question=sapper_query["Question"]
+    Standard_Answer=sapper_query["Standard_Answer"]
+    Evaluation=sapper_query["Evaluation"]
+    Score=sapper_query["Score"]
+    sentence=sapper_query["sentence"]
+    Career=sapper_query["Career"]
+    User_2=sapper_query["User_2"]
+    history_2=sapper_query["history_2"]
+    Helper=sapper_query["Helper"]
+    Judge=sapper_query["Judge"]
+    Advice=sapper_query["Advice"]
+    First_Improvement=sapper_query["First_Improvement"]
     preInfo=sapper_query["preInfo"]
     sapper_query["output"] = []
     if sapper_query["runflag"]:
-        preInfo = """Hi there! 
-    I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
-    To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
-    I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article."""
+        preInfo = """Hello, welcome to the Job Assistant AI. Our AI can not only answer your job-related questions, but also provide you with simulated interview services, offering you an integrated job search experience. Please enter 'Hello' to activate me."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    AI_talk = 'Please provide me with the type of text you would like me to write.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(AI_talk)
-    stop, sapper_query, Text_type = get_value("Text_type", sapper_request, sapper_query)
+    stop, sapper_query, Empty = get_value("Empty", sapper_request, sapper_query)
     if stop and sapper_query["runflag"]:
         sapper_query["runflag"] = False
-        sapper_query["input"] = "Text_type"
+        sapper_query["input"] = "Empty"
         savequery(sapper_query)
         return {'Answer': sapper_query["output"]}
-    Reply1 = "Next, you can have a conversation with a writing robot that will answer your questions and brainstorm with you.The conversation will end when you input 'bey'.Please ask questions from the perspectives of the target audience, the main topic of the article, the style of the article, the materials needed for the article, and the identity of the article's author during the inquiry process.";
+    start = 'Dear users, welcome to use Sixiaopin. Please enter 1 for mock interview or 2 for other job search functions such as resume aid';
     if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply1)
-    question = 'yes';
-    while question != 'bey':
-        AIReply = 'Please enter the question you want to ask.';
+        sapper_query["output"].append(start)
+    stop, sapper_query, option = get_value("option", sapper_request, sapper_query)
+    if stop and sapper_query["runflag"]:
+        sapper_query["runflag"] = False
+        sapper_query["input"] = "option"
+        savequery(sapper_query)
+        return {'Answer': sapper_query["output"]}
+    if option == '1':
+        chatbot = 'Welcome to the Simulated Interview Service of Si Xiao Pin! Please enter your interview scenario and your personal experience below.';
         if sapper_query["runflag"]:
-            sapper_query["output"].append(AIReply)
-        stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
+            sapper_query["output"].append(chatbot)
+        stop, sapper_query, Scene = get_value("Scene", sapper_request, sapper_query)
         if stop and sapper_query["runflag"]:
             sapper_query["runflag"] = False
-            sapper_query["input"] = "question"
+            sapper_query["input"] = "Scene"
             savequery(sapper_query)
             return {'Answer': sapper_query["output"]}
-        if sapper_query["runflag"]:
-            bot_one = chain.worker("R`cj=cibYgd*2$E$8AAH",[Text_type,history,question],{"model":"t","engine":" text-davinci-003"})
-            sapper_query["bot_one"]=bot_one
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(bot_one)
-        if sapper_query["runflag"]:
-            abbreviation = chain.worker("|Mi`-w1#PGiP(A$mH4hm",[bot_one],{"model":"t","engine":" text-davinci-003"})
-            sapper_query["abbreviation"]=abbreviation
-        if sapper_query["runflag"]:
-            history = chain.worker("n?{lFAQ%+rp)72JSi[OU",[history,question,abbreviation],{"engine":"PythonREPL"})
-            sapper_query["history"]=history
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(AIReply)
-        stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "question"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-    
-    Reply8 = 'Target audience of the article, article topic, writing style, and author identity, please provide them in order for me.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply8)
-    stop, sapper_query, Audience = get_value("Audience", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "Audience"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    stop, sapper_query, Theme = get_value("Theme", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "Theme"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    stop, sapper_query, Style = get_value("Style", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "Style"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    stop, sapper_query, Identity = get_value("Identity", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "Identity"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    if sapper_query["runflag"]:
-        Information = chain.worker("i/gw0DU96nRf(2-~Ge9*",[Audience,Theme,Style,Identity],{"engine":"PythonREPL"})
-        sapper_query["Information"]=Information
-    Reply2 = 'Please enter the materials and examples you want to search for in the article, and AI will help find some of them. If "over" is output, it means to stop searching.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply2)
-    stop, sapper_query, wented_knowledge = get_value("wented_knowledge", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "wented_knowledge"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    while wented_knowledge != 'over':
-        if sapper_query["runflag"]:
-            find_knowledge = chain.worker("-uCv8V,22c;Gj^rTs;^q",[wented_knowledge],{"model":"t","engine":" text-davinci-003"})
-            sapper_query["find_knowledge"]=find_knowledge
-        if sapper_query["runflag"]:
-            Simplify_knowledge = chain.worker("W*{TJk*fU7/nlfeZ1hqs",[find_knowledge],{"model":"t","engine":" text-davinci-003"})
-            sapper_query["Simplify_knowledge"]=Simplify_knowledge
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(Simplify_knowledge)
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(Reply2)
-        stop, sapper_query, wented_knowledge = get_value("wented_knowledge", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "wented_knowledge"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-    
-    Reply3 = 'Please select and input the relevant parts from the materials you have searched for that can be used in your article.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(Reply3)
-    stop, sapper_query, materials = get_value("materials", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "materials"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    AI_reply1 = 'Input "start," AI begins writing.';
-    if sapper_query["runflag"]:
-        sapper_query["output"].append(AI_reply1)
-    stop, sapper_query, choose_user = get_value("choose_user", sapper_request, sapper_query)
-    if stop and sapper_query["runflag"]:
-        sapper_query["runflag"] = False
-        sapper_query["input"] = "choose_user"
-        savequery(sapper_query)
-        return {'Answer': sapper_query["output"]}
-    if choose_user == 'start':
-        if sapper_query["runflag"]:
-            AI_writing = chain.worker("5qi.shLZ]tEXqDZeTm-U",[Identity,Text_type,Information,materials],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
-            sapper_query["AI_writing"]=AI_writing
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(AI_writing)
-        AI_reply2 = "Please input the content you want to polish, input 'over' to stop.";
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(AI_reply2)
-        stop, sapper_query, poilsh_part = get_value("poilsh_part", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "poilsh_part"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
-        while poilsh_part != 'over':
-            AI_reply3 = 'Please input the direction you want to polish.';
+        while Answer != 'Bye':
             if sapper_query["runflag"]:
-                sapper_query["output"].append(AI_reply3)
-            stop, sapper_query, polish_dirction = get_value("polish_dirction", sapper_request, sapper_query)
+                Question = chain.worker("cfMm_^CqC=qE;:%QcQQ0",[history_1,Scene],{"temperature":0.7,"max_tokens":861,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+                sapper_query["Question"]=Question
+            if sapper_query["runflag"]:
+                sapper_query["output"].append(Question)
+            if sapper_query["runflag"]:
+                history_1 = chain.worker("Q$V+u{Y]P%SZP``Uq(FN",[history_1,Question],{"temperature":0.7,"max_tokens":861,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+                sapper_query["history_1"]=history_1
+            stop, sapper_query, Answer = get_value("Answer", sapper_request, sapper_query)
             if stop and sapper_query["runflag"]:
                 sapper_query["runflag"] = False
-                sapper_query["input"] = "polish_dirction"
+                sapper_query["input"] = "Answer"
+                savequery(sapper_query)
+                return {'Answer': sapper_query["output"]}
+            if Answer != 'Bye':
+                if sapper_query["runflag"]:
+                    Standard_Answer = chain.worker("kRan_$l+VgL_*DGf;QKV",[Question],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                    sapper_query["Standard_Answer"]=Standard_Answer
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(Standard_Answer)
+                if sapper_query["runflag"]:
+                    Evaluation = chain.worker("@F-Q?_/`-Jh,T7E28Y3@",[Scene,Question,Answer,Standard_Answer],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"model":"g","engine":" gpt-3.5-turbo"})
+                    sapper_query["Evaluation"]=Evaluation
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(Evaluation)
+                if sapper_query["runflag"]:
+                    Score = chain.worker("TB%LvOBG57D8Ngb`Q92M",[Scene,Question,Answer,Standard_Answer,Evaluation],{"temperature":0.7,"max_tokens":2000,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                    sapper_query["Score"]=Score
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(Score)
+            else:
+                chatbot = 'Thank you for using Sixiaopin! Good luck in your job search!';
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(chatbot)
+            
+        
+    elif option == '2':
+        chatbot = 'Please enter your target occupation:';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(chatbot)
+        stop, sapper_query, sentence = get_value("sentence", sapper_request, sapper_query)
+        if stop and sapper_query["runflag"]:
+            sapper_query["runflag"] = False
+            sapper_query["input"] = "sentence"
+            savequery(sapper_query)
+            return {'Answer': sapper_query["output"]}
+        if sapper_query["runflag"]:
+            Career = chain.worker("gIUs*4B8gOPX+_}:E^KI",[sentence],{"temperature":0.7,"max_tokens":836,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+            sapper_query["Career"]=Career
+        chatbot = 'Please enter your requirements:';
+        if sapper_query["runflag"]:
+            sapper_query["output"].append(chatbot)
+        while User_2 != 'Bye':
+            stop, sapper_query, User_2 = get_value("User_2", sapper_request, sapper_query)
+            if stop and sapper_query["runflag"]:
+                sapper_query["runflag"] = False
+                sapper_query["input"] = "User_2"
                 savequery(sapper_query)
                 return {'Answer': sapper_query["output"]}
             if sapper_query["runflag"]:
-                polish = chain.worker("?l#]YX`_(k:@Sh:?%Z:o",[poilsh_part,polish_dirction],{"model":"t","engine":" text-davinci-003"})
-                sapper_query["polish"]=polish
+                Helper = chain.worker("Ck=LJ%.v]r?JvqCbn?if",[history_2,Career,User_2],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                sapper_query["Helper"]=Helper
             if sapper_query["runflag"]:
-                sapper_query["output"].append(polish)
+                sapper_query["output"].append(Helper)
             if sapper_query["runflag"]:
-                sapper_query["output"].append(AI_reply2)
-            stop, sapper_query, poilsh_part = get_value("poilsh_part", sapper_request, sapper_query)
-            if stop and sapper_query["runflag"]:
-                sapper_query["runflag"] = False
-                sapper_query["input"] = "poilsh_part"
-                savequery(sapper_query)
-                return {'Answer': sapper_query["output"]}
+                history_2 = chain.worker("ZE4yeBc$rYAJoV]$:D,g",[User_2,history_2,Helper],{"temperature":0.7,"max_tokens":1959,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+                sapper_query["history_2"]=history_2
+            if User_2 != 'Bye':
+                chatbot = 'Could you please let me know if you are satisfied with this result? (A. Dissatisfied; B. Satisfied.)';
+                if sapper_query["runflag"]:
+                    sapper_query["output"].append(chatbot)
+                stop, sapper_query, Judge = get_value("Judge", sapper_request, sapper_query)
+                if stop and sapper_query["runflag"]:
+                    sapper_query["runflag"] = False
+                    sapper_query["input"] = "Judge"
+                    savequery(sapper_query)
+                    return {'Answer': sapper_query["output"]}
+                if Judge == 'A':
+                    chatbot = "I'm sorry you're not satisfied with my output. Please provide me with an improvement suggestion, and I will try my best to improve my reply to better meet your needs.";
+                    if sapper_query["runflag"]:
+                        sapper_query["output"].append(chatbot)
+                    stop, sapper_query, Advice = get_value("Advice", sapper_request, sapper_query)
+                    if stop and sapper_query["runflag"]:
+                        sapper_query["runflag"] = False
+                        sapper_query["input"] = "Advice"
+                        savequery(sapper_query)
+                        return {'Answer': sapper_query["output"]}
+                    if sapper_query["runflag"]:
+                        First_Improvement = chain.worker("49]~`,N]7.q$F[TL49HU",[Helper,Advice],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                        sapper_query["First_Improvement"]=First_Improvement
+                    if sapper_query["runflag"]:
+                        sapper_query["output"].append(First_Improvement)
+                    chatbot = 'Could you please let me know if you are satisfied with this result? (A. Dissatisfied; B. Satisfied.)';
+                    if sapper_query["runflag"]:
+                        sapper_query["output"].append(chatbot)
+                    stop, sapper_query, Judge = get_value("Judge", sapper_request, sapper_query)
+                    if stop and sapper_query["runflag"]:
+                        sapper_query["runflag"] = False
+                        sapper_query["input"] = "Judge"
+                        savequery(sapper_query)
+                        return {'Answer': sapper_query["output"]}
+                    while Judge == 'A':
+                        if User_2 != 'Bye':
+                            chatbot = "I'm sorry you're not satisfied with my output. Please provide me with an improvement suggestion, and I will try my best to improve my reply to better meet your needs.";
+                            if sapper_query["runflag"]:
+                                sapper_query["output"].append(chatbot)
+                            stop, sapper_query, Advice = get_value("Advice", sapper_request, sapper_query)
+                            if stop and sapper_query["runflag"]:
+                                sapper_query["runflag"] = False
+                                sapper_query["input"] = "Advice"
+                                savequery(sapper_query)
+                                return {'Answer': sapper_query["output"]}
+                            if sapper_query["runflag"]:
+                                First_Improvement = chain.worker("PO596X1|.Q_4uocH#ko*",[First_Improvement,Advice],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
+                                sapper_query["First_Improvement"]=First_Improvement
+                            if sapper_query["runflag"]:
+                                sapper_query["output"].append(First_Improvement)
+                            chatbot = 'Could you please let me know if you are satisfied with this result? (A. Dissatisfied; B. Satisfied.)';
+                            if sapper_query["runflag"]:
+                                sapper_query["output"].append(chatbot)
+                            stop, sapper_query, Judge = get_value("Judge", sapper_request, sapper_query)
+                            if stop and sapper_query["runflag"]:
+                                sapper_query["runflag"] = False
+                                sapper_query["input"] = "Judge"
+                                savequery(sapper_query)
+                                return {'Answer': sapper_query["output"]}
+                        
+                    
+                    if Judge == 'B':
+                        chatbot = 'Thank you very much for your feedback. I am happy to help you. Please let me know if you need anything else';
+                        if sapper_query["runflag"]:
+                            sapper_query["output"].append(chatbot)
+                    
+                elif Judge == 'B':
+                    chatbot = 'Thank you very much for your feedback. I am happy to help you. Please let me know if you need anything else';
+                    if sapper_query["runflag"]:
+                        sapper_query["output"].append(chatbot)
+                
+            
         
     
     

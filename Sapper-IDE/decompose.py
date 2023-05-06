@@ -1,7 +1,5 @@
 import time
 import openai
-
-# openai.api_key = "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"
 def gpt3(prompt, t, max_tokens):
     try:
         response = openai.Completion.create(
@@ -147,6 +145,6 @@ def Generasteps(query , OpenAIKey):
 
 query = "I need to develop a function that allows users to search for nearby restaurants and hotels according to their current location and display the search results on the map."
 query1 = "I need an automatic problem maker that can generate multiple choice math questions based on the difficulty and number of questions entered by the user."
-# print(decompose(query))
+
 
 pat = {"content": "How are you", "input": ["history", "chatbot"],"prompt":["prompt1","prompt2"] ,"output": "human", "model": "LLM"}

@@ -144,7 +144,7 @@ def sixiaopin(sapper_request):
                 return {'Answer': sapper_query["output"]}
             if Answer != 'Bye':
                 if sapper_query["runflag"]:
-                    Standard_Answer = chain.worker("kRan_$l+VgL_*DGf;QKV",[Question],{"temperature":0.7,"max_tokens":861,"stop_strs":"","top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" text-davinci-003"})
+                    Standard_Answer = chain.worker("kRan_$l+VgL_*DGf;QKV",[Question],{"temperature":0.7,"max_tokens":2048,"top_p":1,"frequency_penalty":0,"presence_penalty":0,"engine":" gpt-3.5-turbo"})
                     sapper_query["Standard_Answer"]=Standard_Answer
                 if sapper_query["runflag"]:
                     sapper_query["output"].append(Standard_Answer)

@@ -107,14 +107,17 @@ def chunxiaoxie(sapper_request):
     sapper_query["output"] = []
     if sapper_query["runflag"]:
         preInfo = """Hi there! 
-    I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
-    To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
-    I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article."""
+
+        I'm Chun Chun, your friendly AI assistant providing you with writing advice. I'm here to help you create the perfect text. 
+
+        To get started, please tell me the type of writing you need to complete.（For example: prose, poetry, etc.）. 
+
+        I'll then provide you with the best writing advice, materials and resources to help you create it.You can update your requirements based on my suggestions.Then collaborate with AI to complete the creation of an article."""
         sapper_query["preInfo"]=preInfo
     if sapper_query["runflag"]:
         sapper_query["output"].append(preInfo)
         stop, sapper_query, Unit = get_value("preInfo", sapper_request, sapper_query)
-    AI_talk = 'Please provide me with the type of text you would like me to write.'
+    AI_talk = 'Please provide me with the type of text you would like me to write.';
     if sapper_query["runflag"]:
         sapper_query["output"].append(AI_talk)
     stop, sapper_query, Text_type = get_value("Text_type", sapper_request, sapper_query)
@@ -148,14 +151,6 @@ def chunxiaoxie(sapper_request):
         if sapper_query["runflag"]:
             history = chain.worker("n?{lFAQ%+rp)72JSi[OU",[history,question,abbreviation],{"engine":"PythonREPL"})
             sapper_query["history"]=history
-        if sapper_query["runflag"]:
-            sapper_query["output"].append(AIReply)
-        stop, sapper_query, question = get_value("question", sapper_request, sapper_query)
-        if stop and sapper_query["runflag"]:
-            sapper_query["runflag"] = False
-            sapper_query["input"] = "question"
-            savequery(sapper_query)
-            return {'Answer': sapper_query["output"]}
 
     Reply8 = 'Target audience of the article, article topic, writing style, and author identity, please provide them in order for me.';
     if sapper_query["runflag"]:
